@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 class Application
 {
@@ -15,4 +16,6 @@ private:
 
 	uint32_t Width;
 	uint32_t Height;
+
+	std::unique_ptr<class Window> AppWindow = nullptr;
 };
