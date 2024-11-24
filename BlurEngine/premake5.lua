@@ -1,6 +1,6 @@
 include "Dependencies.lua"
 
-workspace "VulkanRenderer"
+workspace "BlurEngine"
 	architecture "x64"
 
 	configurations
@@ -38,11 +38,11 @@ project "BlurEngine"
 		"%{IncludeDir.VulkanSDK}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.ObjLoader}",
-		"%{IncludeDir.ImgLoader}",
+		--"%{IncludeDir.ImGui}",
+		--"%{IncludeDir.ObjLoader}",
+		--"%{IncludeDir.ImgLoader}",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.yaml}"
+		--"%{IncludeDir.yaml}"
 	}
 
 	libdirs
@@ -71,7 +71,7 @@ project "BlurEngine"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
+		cppdialect "C++20"
 		staticruntime "On"
 		systemversion "latest"
 
