@@ -4,22 +4,43 @@
     <Filter Include="Core">
       <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VulkanCore">
+      <UniqueIdentifier>{7F0AA990-6BC2-EADD-D4C9-C339C0A085CE}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Core\Application.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\Core\Logger.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\Core\Window.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Utility.h">
+      <Filter>VulkanCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h">
+      <Filter>VulkanCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\Application.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Core\Logger.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Core\Window.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Main.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\Utility.cpp">
+      <Filter>VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\VulcanCommon.cpp">
+      <Filter>VulkanCore</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
