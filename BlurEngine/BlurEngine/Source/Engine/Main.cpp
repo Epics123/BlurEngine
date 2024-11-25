@@ -5,7 +5,7 @@
 
 int main()
 {
-	Application App = Application("Blur Engine", 1920, 1080);
+	Application App = Application("Blur Engine", 1280, 720);
 
 	try
 	{

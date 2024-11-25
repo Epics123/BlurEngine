@@ -6,7 +6,7 @@ Window::Window(const std::string& WindowName, const uint32_t WindowWidth, const 
 	
 }
 
-void Window::Init(GLFWkeyfun keyCallback, GLFWcursorposfun cursorPosCallback, GLFWmousebuttonfun mouseButtonCallback, GLFWscrollfun mouseScrollCallback, GLFWframebuffersizefun framebufferResizeCallback, void* user)
+void Window::Init(GLFWkeyfun KeyCallback, GLFWcursorposfun CursorPosCallback, GLFWmousebuttonfun MouseButtonCallback, GLFWscrollfun MouseScrollCallback, GLFWframebuffersizefun FramebufferResizeCallback, void* User)
 {
 	// Init GLFW
 	glfwInit();
@@ -15,13 +15,13 @@ void Window::Init(GLFWkeyfun keyCallback, GLFWcursorposfun cursorPosCallback, GL
 
 	GLFWWindow = glfwCreateWindow(Width, Height, Name.c_str(), nullptr, nullptr);
 
-	glfwSetKeyCallback(GLFWWindow, keyCallback);
-	glfwSetCursorPosCallback(GLFWWindow, cursorPosCallback);
-	glfwSetMouseButtonCallback(GLFWWindow, mouseButtonCallback);
-	glfwSetScrollCallback(GLFWWindow, mouseScrollCallback);
+	glfwSetKeyCallback(GLFWWindow, KeyCallback);
+	glfwSetCursorPosCallback(GLFWWindow, CursorPosCallback);
+	glfwSetMouseButtonCallback(GLFWWindow, MouseButtonCallback);
+	glfwSetScrollCallback(GLFWWindow, MouseScrollCallback);
 
 	glfwSetWindowUserPointer(GLFWWindow, this);
-	glfwSetFramebufferSizeCallback(GLFWWindow, framebufferResizeCallback);
+	glfwSetFramebufferSizeCallback(GLFWWindow, FramebufferResizeCallback);
 }
 
 void Window::Cleanup()

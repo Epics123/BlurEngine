@@ -17,6 +17,9 @@
     <ClCompile Include="Source\Engine\Core\Application.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Core\Window.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Main.cpp" />
   </ItemGroup>
 </Project>

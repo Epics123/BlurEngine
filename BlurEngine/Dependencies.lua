@@ -10,7 +10,7 @@ IncludeDir["glm"] = "%{wks.location}/%{prj.name}/Source/ThirdParty/glm"
 --IncludeDir["ImgLoader"] = "%{wks.location}/%{prj.name}/Libraries/ImgLoader"
 IncludeDir["spdlog"] = "%{wks.location}/%{prj.name}/Source/ThirdParty/spdlog/include"
 --IncludeDir["yaml"] = "%{wks.location}/%{prj.name}/Libraries/yaml/include"
---IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
+IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
