@@ -2,10 +2,14 @@
 #include <iostream>
 
 #include "Core/Application.h"
+#include "Core/Logger.h"
 
 int main()
 {
 	Application App = Application("Blur Engine", 1280, 720);
+
+	Logger::Init();
+	BE_TRACE("Log Initialized!");
 
 	try
 	{
@@ -13,7 +17,7 @@ int main()
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		BE_ERROR(e.what());
 
 		system("pause");
 

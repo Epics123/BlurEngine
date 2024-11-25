@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "Logger.h"
 
 float gDeltaTime = 0.0f;
 
