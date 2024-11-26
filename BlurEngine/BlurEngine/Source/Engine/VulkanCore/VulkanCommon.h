@@ -14,6 +14,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 
+#include <source_location>
+
 #include "../Core/Logger.h"
 
 #define VK_CHECK(func)                                                                 \
@@ -21,8 +23,15 @@
     const VkResult result = func;                                                      \
     if (result != VK_SUCCESS)                                                          \
     {                                                                                  \
-      const std::string ErrorMsg = "Error calling function " + #func + " at "          \
-      + __FILE__ + ":" + __LINE__ + ". Result is " + string_VkResult(result);          \
+      const std::source_location location = std::source_location::current();           \
+      std::string ErrorMsg = "Error calling function ";                                \
+      ErrorMsg.append(#func);                                                          \
+      ErrorMsg.append(" at");                                                          \
+      ErrorMsg.append(location.file_name());                                           \
+      ErrorMsg.append(":");                                                            \
+      ErrorMsg.append(std::to_string(location.line()));                                \
+      ErrorMsg.append(". Result is ");                                                 \
+      ErrorMsg.append(string_VkResult(result));                                        \
       BE_CRITICAL(ErrorMsg);                                                           \
     }                                                                                  \
   }                                                                                    \

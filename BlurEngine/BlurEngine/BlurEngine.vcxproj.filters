@@ -24,6 +24,7 @@
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h">
       <Filter>VulkanCore</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Context.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\Application.cpp">
@@ -39,8 +40,9 @@
     <ClCompile Include="Source\Engine\VulkanCore\Utility.cpp">
       <Filter>VulkanCore</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\VulkanCore\VulcanCommon.cpp">
+    <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp">
       <Filter>VulkanCore</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\Context.cpp" />
   </ItemGroup>
 </Project>

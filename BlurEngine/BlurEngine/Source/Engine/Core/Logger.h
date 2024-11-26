@@ -18,4 +18,4 @@ private:
 #define BE_INFO(...)  ::Logger::GetCoreLogger()->info(__VA_ARGS__);
 #define BE_WARN(...)  ::Logger::GetCoreLogger()->warn(__VA_ARGS__);
 #define BE_ERROR(...) ::Logger::GetCoreLogger()->error(__VA_ARGS__);
-#define BE_CRITICAL(...) ::Logger::GetCoreLogger()->critical(__VA_ARGS__);
+#define BE_CRITICAL(...) ::Logger::GetCoreLogger()->critical(__VA_ARGS__); assert(false);

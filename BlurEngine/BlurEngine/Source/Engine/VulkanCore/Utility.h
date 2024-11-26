@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #define ASSERT(expr, message) \
   {                           \
     void(message);            \

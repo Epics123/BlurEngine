@@ -98,6 +98,7 @@
     <ClInclude Include="Source\Engine\Core\Application.h" />
     <ClInclude Include="Source\Engine\Core\Logger.h" />
     <ClInclude Include="Source\Engine\Core\Window.h" />
+    <ClInclude Include="Source\Engine\VulkanCore\Context.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Utility.h" />
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h" />
   </ItemGroup>
@@ -106,8 +107,9 @@
     <ClCompile Include="Source\Engine\Core\Logger.cpp" />
     <ClCompile Include="Source\Engine\Core\Window.cpp" />
     <ClCompile Include="Source\Engine\Main.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\Context.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Utility.cpp" />
-    <ClCompile Include="Source\Engine\VulkanCore\VulcanCommon.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
