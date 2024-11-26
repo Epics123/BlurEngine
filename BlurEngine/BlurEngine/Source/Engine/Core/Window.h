@@ -26,6 +26,8 @@ public:
 
 	GLFWwindow* GetGLFWWindow() const { return GLFWWindow; }
 
+	void CreateWindowSurface(VkInstance Instance, VkSurfaceKHR* Surface);
+
 private:
 	bool Resizeable;
 	bool FrameBufferResized = false;

@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "../VulkanCore/VulkanCommon.h"
 
 Window::Window(const std::string& WindowName, const uint32_t WindowWidth, const uint32_t WindowHeight, const bool CanResize)
 	:Name{WindowName}, Width{WindowWidth}, Height{WindowHeight}, Resizeable{CanResize}
@@ -27,4 +28,9 @@ void Window::Init(GLFWkeyfun KeyCallback, GLFWcursorposfun CursorPosCallback, GL
 void Window::Cleanup()
 {
 	glfwDestroyWindow(GLFWWindow);
+}
+
+void Window::CreateWindowSurface(VkInstance Instance, VkSurfaceKHR* Surface)
+{
+	VK_CHECK(glfwCreateWindowSurface(Instance, GLFWWindow, nullptr, Surface));
 }

@@ -1,13 +1,6 @@
 #pragma once
 
 #ifdef _WIN32
-#if !defined(VK_USE_PLATFORM_WIN32_KHR)
-#define NOMINMAX
-#define VK_USE_PLATFORM_WIN32_KHR
-#endif
-#endif
-
-#ifdef _WIN32
 #include <vulkan/vk_enum_string_helper.h>
 #endif
 

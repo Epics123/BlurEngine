@@ -41,6 +41,9 @@
     <ClCompile Include="Source\Engine\Core\Logger.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Core\Renderer\Renderer.cpp">
+      <Filter>Core\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Core\Window.cpp">
       <Filter>Core</Filter>
     </ClCompile>

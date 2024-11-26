@@ -11,7 +11,7 @@ Application::Application()
 Application::Application(const std::string& AppName, const uint32_t AppWidth, const uint32_t AppHeight)
 	:Name{AppName}, Width{AppWidth}, Height{AppHeight}
 {
-	AppWindow = std::make_unique<Window>(Name, Width, Height, true);
+	AppWindow = std::make_shared<Window>(Name, Width, Height, true);
 }
 
 void Application::Run()
@@ -19,8 +19,13 @@ void Application::Run()
 	if(AppWindow)
 	{
 		AppWindow->Init(KeyCallback, CursorPosCallback, MouseButtonCallback, ScrollCallback, FramebufferResizeCallback, this);
+		AppRenderer.Init(AppWindow);
 
 		Tick();
+	}
+	else
+	{
+		BE_CRITICAL("Tried to run the application with no valid window!")
 	}
 }
 

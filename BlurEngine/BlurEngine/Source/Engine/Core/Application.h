@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "Window.h"
+#include "Renderer/Renderer.h"
 
 class Application
 {
@@ -31,5 +32,6 @@ private:
 
 	float LastFrameTime;
 
-	std::unique_ptr<class Window> AppWindow = nullptr;
+	std::shared_ptr<class Window> AppWindow = nullptr;
+	Renderer AppRenderer;
 };

@@ -3,6 +3,8 @@
 #include "Utility.h"
 #include "VulkanCommon.h"
 
+#include "../Core/Window.h"
+
 #include <vma/vk_mem_alloc.h>
 
 namespace VulkanCore
@@ -54,7 +56,7 @@ class Context final
 public:
 	MOVABLE_ONLY(Context);
 
-	Context(class Window& window, VkQueueFlags RequestedQueueTypes = VK_QUEUE_GRAPHICS_BIT);
+	Context(std::shared_ptr<Window> ContextWindow, VkQueueFlags RequestedQueueTypes = VK_QUEUE_GRAPHICS_BIT);
 	~Context();
 
 	static void EndableDefaultFeatures();
@@ -64,8 +66,10 @@ public:
 
 private:
 	void CreateInstance();
+	void CreateSurface();
 
-	std::vector<const char*>& GetRequiredExtentions();
+	std::vector<const char*> GetRequiredExtentions();
+	void EnumerateGLFWExtensions();
 
 	void SetupDebugMessenger();
 	void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& OutInfo);
@@ -75,8 +79,11 @@ private:
 	static PhysicalDeviceFeatures sPhysicalDeviceFeatures;
 
 	VkInstance Instance;
+	VkSurfaceKHR Surface;
 
 	VmaAllocator Allocator;
+
+	std::shared_ptr<class Window> ActiveWindow;
 
 	bool bEnableValidationLayers = false;
 	VkDebugUtilsMessengerEXT DebugMessenger;

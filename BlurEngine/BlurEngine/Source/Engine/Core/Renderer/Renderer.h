@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../VulkanCore/Utility.h"
+#include "../VulkanCore/Context.h"
+#include "Window.h"
 
 #include <memory>
 
@@ -12,8 +14,10 @@ public:
 	Renderer();
 	~Renderer();
 
-	void Init();
+	void Init(std::shared_ptr<class Window> AppWindow);
 
 private:
-	std::unique_ptr<class Context> RenderingContext;
+	std::unique_ptr<VulkanCore::Context> RenderingContext;
+
+	std::shared_ptr<class Window> ActiveWindow;
 };

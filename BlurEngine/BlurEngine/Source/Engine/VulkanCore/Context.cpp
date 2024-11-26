@@ -1,5 +1,6 @@
 #include "Context.h"
-#include "../Core/Window.h"
+
+#include <unordered_set>
 
 namespace VulkanCore
 {
@@ -53,7 +54,8 @@ namespace VulkanCore
 
 PhysicalDeviceFeatures Context::sPhysicalDeviceFeatures = PhysicalDeviceFeatures();
 
-Context::Context(class Window& window, VkQueueFlags RequestedQueueTypes)
+Context::Context(std::shared_ptr<Window> ContextWindow, VkQueueFlags RequestedQueueTypes)
+	:ActiveWindow{ContextWindow}
 {
 #ifdef _DEBUG
 	bEnableValidationLayers = true;
@@ -62,31 +64,55 @@ Context::Context(class Window& window, VkQueueFlags RequestedQueueTypes)
 #endif
 
 	CreateInstance();
+	SetupDebugMessenger();
+	CreateSurface();
 }
 
 Context::~Context()
 {
+	if(Surface != VK_NULL_HANDLE)
+	{
+		vkDestroySurfaceKHR(Instance, Surface, nullptr);
+	}
 
+	if (bEnableValidationLayers)
+	{
+		DestroyDebugUtilsMessengerEXT(Instance, DebugMessenger, nullptr);
+	}
+
+	vkDestroyInstance(Instance, nullptr);
 }
 
 void Context::EndableDefaultFeatures()
 {
-
+	sPhysicalDeviceFeatures.Vulkan12Features.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.shaderStorageImageArrayNonUniformIndexing = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.descriptorBindingUpdateUnusedWhilePending = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.descriptorBindingPartiallyBound = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.descriptorBindingVariableDescriptorCount = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.descriptorIndexing = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.runtimeDescriptorArray = VK_TRUE;
 }
 
 void Context::EnableIndirectRenderingFeature()
 {
-
+	sPhysicalDeviceFeatures.Vulkan11Features.shaderDrawParameters = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.drawIndirectCount = VK_TRUE;
+	sPhysicalDeviceFeatures.DeviceFeatures.multiDrawIndirect = VK_TRUE;
+	sPhysicalDeviceFeatures.DeviceFeatures.drawIndirectFirstInstance = VK_TRUE;
 }
 
 void Context::EnableSyncronizationFeature()
 {
-
+	sPhysicalDeviceFeatures.Vulkan13Features.synchronization2 = VK_TRUE;
 }
 
 void Context::EnableBufferDeviceAddressFeature()
 {
-
+	sPhysicalDeviceFeatures.Vulkan12Features.bufferDeviceAddress = VK_TRUE;
+	sPhysicalDeviceFeatures.Vulkan12Features.bufferDeviceAddressCaptureReplay = VK_TRUE;
 }
 
 void Context::CreateInstance()
@@ -108,6 +134,7 @@ void Context::CreateInstance()
 	CreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	CreateInfo.pApplicationInfo = &AppInfo;
 
+	EnumerateGLFWExtensions();
 	std::vector<const char*> Extensions = GetRequiredExtentions();
 	for(const char* Extension : RequestedInstanceExtensions)
 	{
@@ -135,7 +162,19 @@ void Context::CreateInstance()
 	VK_CHECK(vkCreateInstance(&CreateInfo, nullptr, &Instance));
 }
 
-std::vector<const char*>& Context::GetRequiredExtentions()
+void Context::CreateSurface()
+{
+	if(ActiveWindow)
+	{
+		ActiveWindow->CreateWindowSurface(Instance, &Surface);
+	}
+	else
+	{
+		BE_CRITICAL("Trying to create a surface without a valid window!");
+	}
+}
+
+std::vector<const char*> Context::GetRequiredExtentions()
 {
 	uint32_t GlfwExtensionCount = 0;
 	const char** GlfwExtensions;
@@ -149,6 +188,34 @@ std::vector<const char*>& Context::GetRequiredExtentions()
 	}
 
 	return Extensions;
+}
+
+void Context::EnumerateGLFWExtensions()
+{
+	uint32_t ExtensionCount = 0;
+	vkEnumerateInstanceExtensionProperties(nullptr, &ExtensionCount, nullptr);
+	std::vector<VkExtensionProperties> Extensions(ExtensionCount);
+	vkEnumerateInstanceExtensionProperties(nullptr, &ExtensionCount, Extensions.data());
+
+	std::unordered_set<std::string> AvailableExtensions;
+	BE_INFO("Available Instance Extensions:")
+	for (const auto& Extension : Extensions)
+	{
+		BE_INFO("\t{0}", Extension.extensionName)
+		AvailableExtensions.insert(Extension.extensionName);
+	}
+
+	BE_WARN("Required Instance Extensions:")
+	auto RequiredExtensions = GetRequiredExtentions();
+	for (const auto& RequiredExtension : RequiredExtensions)
+	{
+		BE_WARN("\t{0}", RequiredExtension)
+		if (AvailableExtensions.find(RequiredExtension) == AvailableExtensions.end())
+		{
+			const std::string ErrorMsg = "Missing required glfw extension: " + std::string(RequiredExtension);
+			BE_CRITICAL(ErrorMsg);
+		}
+	}
 }
 
 void Context::SetupDebugMessenger()
