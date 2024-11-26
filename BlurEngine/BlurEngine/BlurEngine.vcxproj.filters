@@ -4,6 +4,9 @@
     <Filter Include="Core">
       <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Renderer">
+      <UniqueIdentifier>{948B5FDE-004C-DB14-C986-2492350620F1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="VulkanCore">
       <UniqueIdentifier>{7F0AA990-6BC2-EADD-D4C9-C339C0A085CE}</UniqueIdentifier>
     </Filter>
@@ -15,8 +18,14 @@
     <ClInclude Include="Source\Engine\Core\Logger.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\Core\Renderer\Renderer.h">
+      <Filter>Core\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\Core\Window.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Context.h">
+      <Filter>VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Utility.h">
       <Filter>VulkanCore</Filter>
@@ -24,7 +33,6 @@
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h">
       <Filter>VulkanCore</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\VulkanCore\Context.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\Application.cpp">
@@ -37,12 +45,14 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Main.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\Context.cpp">
+      <Filter>VulkanCore</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Utility.cpp">
       <Filter>VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp">
       <Filter>VulkanCore</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\VulkanCore\Context.cpp" />
   </ItemGroup>
 </Project>

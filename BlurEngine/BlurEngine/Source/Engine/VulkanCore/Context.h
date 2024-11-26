@@ -65,6 +65,8 @@ public:
 private:
 	void CreateInstance();
 
+	std::vector<const char*>& GetRequiredExtentions();
+
 	void SetupDebugMessenger();
 	void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& OutInfo);
 	bool IsValidationLayersSupported();
@@ -79,7 +81,8 @@ private:
 	bool bEnableValidationLayers = false;
 	VkDebugUtilsMessengerEXT DebugMessenger;
 
-	const std::vector<std::string> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
+	const std::vector<const char*> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
+	const std::vector<const char*> RequestedInstanceExtensions = { VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME };
 };
 
 }

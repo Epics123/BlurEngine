@@ -60,6 +60,8 @@ Context::Context(class Window& window, VkQueueFlags RequestedQueueTypes)
 #else
 	bEnableValidationLayers = false;
 #endif
+
+	CreateInstance();
 }
 
 Context::~Context()
@@ -105,6 +107,48 @@ void Context::CreateInstance()
 	VkInstanceCreateInfo CreateInfo = {};
 	CreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	CreateInfo.pApplicationInfo = &AppInfo;
+
+	std::vector<const char*> Extensions = GetRequiredExtentions();
+	for(const char* Extension : RequestedInstanceExtensions)
+	{
+		Extensions.push_back(Extension);
+	}
+
+	CreateInfo.enabledExtensionCount = static_cast<uint32_t>(Extensions.size());
+	CreateInfo.ppEnabledExtensionNames = Extensions.data();
+
+	VkDebugUtilsMessengerCreateInfoEXT DebugCreateInfo;
+	if (bEnableValidationLayers)
+	{
+		CreateInfo.enabledLayerCount = static_cast<uint32_t>(ValidationLayers.size());
+		CreateInfo.ppEnabledLayerNames = ValidationLayers.data();
+
+		PopulateDebugMessengerCreateInfo(DebugCreateInfo);
+		CreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&DebugCreateInfo;
+	}
+	else
+	{
+		CreateInfo.enabledLayerCount = 0;
+		CreateInfo.pNext = nullptr;
+	}
+
+	VK_CHECK(vkCreateInstance(&CreateInfo, nullptr, &Instance));
+}
+
+std::vector<const char*>& Context::GetRequiredExtentions()
+{
+	uint32_t GlfwExtensionCount = 0;
+	const char** GlfwExtensions;
+	GlfwExtensions = glfwGetRequiredInstanceExtensions(&GlfwExtensionCount);
+
+	std::vector<const char*> Extensions(GlfwExtensions, GlfwExtensions + GlfwExtensionCount);
+
+	if (bEnableValidationLayers)
+	{
+		Extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+	}
+
+	return Extensions;
 }
 
 void Context::SetupDebugMessenger()

@@ -23,6 +23,10 @@ project "BlurEngine"
 	{
 		"%{prj.name}/Source/Engine/**.h",
 		"%{prj.name}/Source/Engine/**.cpp",
+		"%{prj.name}/Source/Engine/Core/**.h",
+		"%{prj.name}/Source/Engine/Core/**.cpp",
+		"%{prj.name}/Source/Engine/VulkanCore/**.h",
+		"%{prj.name}/Source/Engine/VulkanCore/**.cpp"
 		--"%{prj.name}/Libraries/ImGui/**.h",
 		--"%{prj.name}/Libraries/ImGui/**.cpp",
 		--"%{prj.name}/Libraries/ImGui/ImGuizmo/**.h",
@@ -36,6 +40,9 @@ project "BlurEngine"
 	includedirs
 	{
 		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.Engine}",
+		"%{IncludeDir.Core}",
+		"%{IncludeDir.VulkanCore}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
 		--"%{IncludeDir.ImGui}",
