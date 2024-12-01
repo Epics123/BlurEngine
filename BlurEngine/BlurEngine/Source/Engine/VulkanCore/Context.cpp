@@ -63,6 +63,11 @@ Context::Context(std::shared_ptr<Window> ContextWindow, VkQueueFlags RequestedQu
 	bEnableValidationLayers = false;
 #endif
 
+	ApplicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	ApplicationInfo.pApplicationName = AppWindow.getName();
+	ApplicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	ApplicationInfo.apiVersion = VK_API_VERSION_1_3;
+
 	CreateInstance();
 	SetupDebugMessenger();
 	CreateSurface();

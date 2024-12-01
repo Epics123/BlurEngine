@@ -81,6 +81,8 @@ private:
 	VkInstance Instance;
 	VkSurfaceKHR Surface;
 
+	VkApplicationInfo ApplicationInfo;
+
 	VmaAllocator Allocator;
 
 	std::shared_ptr<class Window> ActiveWindow;
