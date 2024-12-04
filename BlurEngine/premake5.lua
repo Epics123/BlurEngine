@@ -81,6 +81,7 @@ project "BlurEngine"
 
 	filter "configurations:Debug"
 		symbols "On"
+		buildoptions {"/wd4996"}
 
 	filter "configurations:Release"
 		optimize "On"
