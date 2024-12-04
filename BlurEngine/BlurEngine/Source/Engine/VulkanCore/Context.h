@@ -68,6 +68,8 @@ private:
 	void CreateInstance();
 	void CreateSurface();
 
+	void ChoosePhysicalDevice();
+
 	std::vector<const char*> GetRequiredExtentions();
 	void EnumerateGLFWExtensions();
 
@@ -77,6 +79,7 @@ private:
 
 private:
 	static PhysicalDeviceFeatures sPhysicalDeviceFeatures;
+	class PhysicalDevice GPUDevice;
 
 	VkInstance Instance;
 	VkSurfaceKHR Surface;

@@ -27,6 +27,9 @@
     <ClInclude Include="Source\Engine\VulkanCore\Context.h">
       <Filter>VulkanCore</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h">
+      <Filter>VulkanCore</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Utility.h">
       <Filter>VulkanCore</Filter>
     </ClInclude>
@@ -49,6 +52,9 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\Main.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Context.cpp">
+      <Filter>VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp">
       <Filter>VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Utility.cpp">

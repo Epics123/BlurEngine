@@ -24,6 +24,8 @@ public:
 	void SetWidth(const uint32_t NewWidth) { Width = NewWidth; }
 	void SetHeight(const uint32_t NewHeight) { Height = NewHeight; }
 
+	const std::string& GetName() { return Name; }
+
 	GLFWwindow* GetGLFWWindow() const { return GLFWWindow; }
 
 	void CreateWindowSurface(VkInstance Instance, VkSurfaceKHR* Surface);

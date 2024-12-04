@@ -1,4 +1,7 @@
 #include "Context.h"
+#include "PhysicalDevice.h"
+
+#include "../Core/Logger.h"
 
 #include <unordered_set>
 
@@ -64,9 +67,10 @@ Context::Context(std::shared_ptr<Window> ContextWindow, VkQueueFlags RequestedQu
 #endif
 
 	ApplicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	ApplicationInfo.pApplicationName = AppWindow.getName();
+	ApplicationInfo.pApplicationName = ActiveWindow->GetName().c_str();
 	ApplicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	ApplicationInfo.apiVersion = VK_API_VERSION_1_3;
+
 
 	CreateInstance();
 	SetupDebugMessenger();
@@ -176,6 +180,26 @@ void Context::CreateSurface()
 	else
 	{
 		BE_CRITICAL("Trying to create a surface without a valid window!");
+	}
+}
+
+void Context::ChoosePhysicalDevice()
+{
+	uint32_t DeviceCount = 0;
+	vkEnumeratePhysicalDevices(Instance, &DeviceCount, nullptr);
+	if(DeviceCount == 0)
+	{
+		BE_CRITICAL("Failed to find GPUs with Vulkan support!");
+	}
+
+	BE_INFO("Device Count: {0}", DeviceCount);
+
+	std::vector<VkPhysicalDevice> Devices(DeviceCount);
+	vkEnumeratePhysicalDevices(Instance, &DeviceCount, Devices.data());
+
+	for(const VkPhysicalDevice& PhysDevice : Devices)
+	{
+		
 	}
 }
 

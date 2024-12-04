@@ -101,6 +101,7 @@
     <ClInclude Include="Source\Engine\Core\Renderer\Renderer.h" />
     <ClInclude Include="Source\Engine\Core\Window.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Context.h" />
+    <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Utility.h" />
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h" />
   </ItemGroup>
@@ -111,6 +112,7 @@
     <ClCompile Include="Source\Engine\Core\Window.cpp" />
     <ClCompile Include="Source\Engine\Main.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Context.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Utility.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp" />
   </ItemGroup>
