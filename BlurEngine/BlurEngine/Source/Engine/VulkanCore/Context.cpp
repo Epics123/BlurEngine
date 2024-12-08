@@ -1,9 +1,9 @@
 #include "Context.h"
-#include "PhysicalDevice.h"
 
 #include "../Core/Logger.h"
 
 #include <unordered_set>
+#include <set>
 
 namespace VulkanCore
 {
@@ -75,10 +75,14 @@ Context::Context(std::shared_ptr<Window> ContextWindow, VkQueueFlags RequestedQu
 	CreateInstance();
 	SetupDebugMessenger();
 	CreateSurface();
+	ChoosePhysicalDevice();
+	CreateLogicalDevice();
 }
 
 Context::~Context()
 {
+	vkDestroyDevice(Device, nullptr);
+
 	if(Surface != VK_NULL_HANDLE)
 	{
 		vkDestroySurfaceKHR(Instance, Surface, nullptr);
@@ -183,6 +187,79 @@ void Context::CreateSurface()
 	}
 }
 
+void Context::CreateLogicalDevice()
+{
+	const auto FamilyIndices = GPUDevice.FindQueueFamilies();
+
+	std::vector<VkDeviceQueueCreateInfo> QueueCreateInfos;
+	std::vector<std::vector<float>> QueueFamilyPriorities(FamilyIndices.size());
+
+	size_t Index = 0;
+	for(QueueFamilyPair QueueFamily : FamilyIndices)
+	{
+		const uint32_t QueueFamilyIndex = QueueFamily.first;
+		const uint32_t QueueCount = QueueFamily.second;
+
+		QueueFamilyPriorities[Index] = std::vector<float>(QueueCount, 1.0f);
+
+		VkDeviceQueueCreateInfo QueueCreateInfo = {};
+		QueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		QueueCreateInfo.queueFamilyIndex = QueueFamilyIndex;
+		QueueCreateInfo.queueCount = QueueCount;
+		QueueCreateInfo.pQueuePriorities = QueueFamilyPriorities[Index].data();
+		QueueCreateInfos.emplace_back(QueueCreateInfo);
+
+		++Index;
+	}
+
+	VkPhysicalDeviceFeatures2 DeviceFeatures{};
+	DeviceFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+	DeviceFeatures.features = sPhysicalDeviceFeatures.DeviceFeatures;
+
+	VulkanFeatureChain<> FeatureChain;
+	FeatureChain.PushBack(DeviceFeatures);
+	FeatureChain.PushBack(sPhysicalDeviceFeatures.Vulkan11Features);
+	FeatureChain.PushBack(sPhysicalDeviceFeatures.Vulkan12Features);
+#if _WIN32
+	FeatureChain.PushBack(sPhysicalDeviceFeatures.Vulkan13Features);
+#endif
+
+	if(GPUDevice.IsRayTracingSupported() && ShouldSupportRayTracing)
+	{
+		FeatureChain.PushBack(sPhysicalDeviceFeatures.AccelStructFeatures);
+		FeatureChain.PushBack(sPhysicalDeviceFeatures.RayTracingPipelineFeatures);
+		FeatureChain.PushBack(sPhysicalDeviceFeatures.RayQueryFeatures);
+	}
+
+	if(GPUDevice.IsMultiviewSupported())
+	{
+		sPhysicalDeviceFeatures.Vulkan11Features.multiview = VK_TRUE;
+	}
+
+	if(GPUDevice.IsFragmentDensityMapSupported())
+	{
+		FeatureChain.PushBack(sPhysicalDeviceFeatures.FragmentDensityMapFeatures);
+	}
+
+	VkDeviceCreateInfo DeviceCreateInfo{};
+	DeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	DeviceCreateInfo.pNext = FeatureChain.FirsNextPtr();
+	DeviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(QueueCreateInfos.size());
+	DeviceCreateInfo.pQueueCreateInfos = QueueCreateInfos.data();
+	DeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(DeviceExtensions.size());
+	DeviceCreateInfo.ppEnabledExtensionNames = DeviceExtensions.data();
+
+	if(EnableValidationLayers)
+	{
+		DeviceCreateInfo.enabledLayerCount = static_cast<uint32_t>(ValidationLayers.size());
+		DeviceCreateInfo.ppEnabledLayerNames = ValidationLayers.data();
+	}
+
+	VK_CHECK(vkCreateDevice(GPUDevice.GetVkPhysicalDevice(), &DeviceCreateInfo, nullptr, &Device));
+
+	ResizeQueues();
+}
+
 void Context::ChoosePhysicalDevice()
 {
 	uint32_t DeviceCount = 0;
@@ -199,7 +276,149 @@ void Context::ChoosePhysicalDevice()
 
 	for(const VkPhysicalDevice& PhysDevice : Devices)
 	{
-		
+		if(IsPhysicalDeviceSuitable(PhysDevice))
+		{
+			GPUDevice = PhysicalDevice(PhysDevice, Surface);
+			break;
+		}
+	}
+
+	if(!GPUDevice.IsDeviceValid())
+	{
+		BE_CRITICAL("Failed to find a suitable GPU!");
+	}
+
+	BE_INFO("Selected GPU: {0}", GPUDevice.GetDeviceProperties().deviceName);
+
+	GPUDevice.ReserveQueues(RequestedQueues | VK_QUEUE_GRAPHICS_BIT, Surface);
+}
+
+bool Context::IsPhysicalDeviceSuitable(VkPhysicalDevice Device)
+{
+	QueueFamilyIndices Indices;
+	FindQueueFamilies(Device, Indices);
+
+	bool ExtensionsSupported = CheckPhysicalDeviceExtensionSupport(Device);
+
+	bool SwapChainAdequate = false;
+	if(ExtensionsSupported)
+	{
+		SwapChainSupportDetails SwapChainSupport;
+		QuerySwapChainSupport(Device, SwapChainSupport);
+
+		SwapChainAdequate = !SwapChainSupport.Formats.empty() && !SwapChainSupport.PresentModes.empty();
+	}
+
+	VkPhysicalDeviceFeatures SupportedFeatures;
+	vkGetPhysicalDeviceFeatures(Device, &SupportedFeatures);
+
+	return Indices.IsComplete() && ExtensionsSupported && SwapChainAdequate && SupportedFeatures.samplerAnisotropy;
+}
+
+bool Context::CheckPhysicalDeviceExtensionSupport(VkPhysicalDevice Device)
+{
+	uint32_t ExtensionCount;
+	vkEnumerateDeviceExtensionProperties(Device, nullptr, &ExtensionCount, nullptr);
+
+	std::vector<VkExtensionProperties> AvailableExtensions(ExtensionCount);
+	vkEnumerateDeviceExtensionProperties(Device, nullptr, &ExtensionCount, AvailableExtensions.data());
+
+	std::set<std::string> RequiredExtensions(DeviceExtensions.begin(), DeviceExtensions.end());
+
+	BE_INFO("Available Physical Device Extensions:");
+	for(const VkExtensionProperties& Extension : AvailableExtensions)
+	{
+		BE_INFO("\t{0}", Extension.extensionName);
+		RequiredExtensions.erase(Extension.extensionName);
+	}
+
+	return RequiredExtensions.empty();
+}
+
+void Context::FindQueueFamilies(VkPhysicalDevice Device, QueueFamilyIndices& OutIndices)
+{
+	uint32_t QueueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(Device, &QueueFamilyCount, nullptr);
+
+	std::vector<VkQueueFamilyProperties> QueueFamilies(QueueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(Device, &QueueFamilyCount, QueueFamilies.data());
+
+	uint32_t i = 0;
+	for(const auto& QueueFamily : QueueFamilies)
+	{
+		if(QueueFamily.queueCount > 0 && QueueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		{
+			OutIndices.GraphicsFamily = i;
+			OutIndices.GraphicsFamilyHasValue = true;
+		}
+
+		VkBool32 PresentSupport = false;
+		vkGetPhysicalDeviceSurfaceSupportKHR(Device, i, Surface, &PresentSupport);
+		if(QueueFamily.queueCount > 0 && PresentSupport)
+		{
+			OutIndices.PresentFamily = i;
+			OutIndices.PresentFamilyHasValue = true;
+		}
+
+		if(OutIndices.IsComplete())
+		{
+			break;
+		}
+
+		i++;
+	}
+}
+
+void Context::QuerySwapChainSupport(VkPhysicalDevice Device, SwapChainSupportDetails& OutDetails)
+{
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Device, Surface, &OutDetails.Capabilities);
+
+	uint32_t FormatCount = 0;
+	vkGetPhysicalDeviceSurfaceFormatsKHR(Device, Surface, &FormatCount, nullptr);
+	if(FormatCount != 0)
+	{
+		OutDetails.Formats.resize(FormatCount);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(Device, Surface, &FormatCount, OutDetails.Formats.data());
+	}
+
+	uint32_t PresentModeCount = 0;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(Device, Surface, &PresentModeCount, nullptr);
+	if(PresentModeCount != 0)
+	{
+		OutDetails.PresentModes.resize(PresentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(Device, Surface, &PresentModeCount, OutDetails.PresentModes.data());
+	}
+}
+
+void Context::ResizeQueues()
+{
+	if (GPUDevice.GetGraphicsFamilyIndex().has_value() && GPUDevice.GraphicsFamilyCount() > 0)
+	{
+		GraphicsQueues.resize(GPUDevice.GraphicsFamilyCount(), VK_NULL_HANDLE);
+		for (size_t i = 0; i < GraphicsQueues.size(); i++)
+		{
+			vkGetDeviceQueue(Device, GPUDevice.GetGraphicsFamilyIndex().value(), uint32_t(i), &GraphicsQueues[i]);
+		}
+	}
+	if (GPUDevice.GetComputeFamilyIndex().has_value() && GPUDevice.ComputeFamilyCount() > 0)
+	{
+		ComputeQueues.resize(GPUDevice.ComputeFamilyCount(), VK_NULL_HANDLE);
+		for (size_t i = 0; i < ComputeQueues.size(); i++)
+		{
+			vkGetDeviceQueue(Device, GPUDevice.GetComputeFamilyIndex().value(), uint32_t(i), &ComputeQueues[i]);
+		}
+	}
+	if (GPUDevice.GetTransferFamilyIndex().has_value() && GPUDevice.TransferFamilyCount() > 0)
+	{
+		TransferQueues.resize(GPUDevice.TransferFamilyCount(), VK_NULL_HANDLE);
+		for (size_t i = 0; i < TransferQueues.size(); i++)
+		{
+			vkGetDeviceQueue(Device, GPUDevice.GetTransferFamilyIndex().value(), uint32_t(i), &TransferQueues[i]);
+		}
+	}
+	if (GPUDevice.GetPresentationFamilyIndex().has_value())
+	{
+		vkGetDeviceQueue(Device, GPUDevice.GetPresentationFamilyIndex().value(), 0, &PresentQueue);
 	}
 }
 

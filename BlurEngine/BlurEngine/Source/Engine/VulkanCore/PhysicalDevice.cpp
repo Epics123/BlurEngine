@@ -9,8 +9,8 @@ PhysicalDevice::PhysicalDevice(VkPhysicalDevice Device, VkSurfaceKHR Surface, bo
 	InitFeatures();
 	InitProperties();
 
-	MemoryProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
-	vkGetPhysicalDeviceMemoryProperties2(VulkanPhysicalDevice, &MemoryProperties);
+	/*MemoryProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
+	vkGetPhysicalDeviceMemoryProperties2(VulkanPhysicalDevice, &MemoryProperties);*/
 
 	{
 		uint32_t PropertyCount = 0;
