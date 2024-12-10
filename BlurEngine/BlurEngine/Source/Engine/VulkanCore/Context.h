@@ -8,6 +8,7 @@
 
 #include <vma/vk_mem_alloc.h>
 
+#include <memory>
 #include <any>
 
 namespace VulkanCore
@@ -135,6 +136,8 @@ private:
 	void SetupDebugMessenger();
 	void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& OutInfo);
 	bool IsValidationLayersSupported();
+
+	void CreateMemoryAllocatior();
 
 public:
 #ifdef _DEBUG

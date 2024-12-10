@@ -52,8 +52,8 @@ project "BlurEngine"
 	libdirs
 	{
 		"%{LibraryDir.VulkanSDK}",
-		"%{LibraryDir.GLFW}"
-		--"%{Library.VulkanUtils}"
+		"%{LibraryDir.GLFW}",
+		"%{Library.VulkanUtils}"
 	}
 
 	links

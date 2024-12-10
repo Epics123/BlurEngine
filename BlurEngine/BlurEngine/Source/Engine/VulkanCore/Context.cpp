@@ -77,10 +77,14 @@ Context::Context(std::shared_ptr<Window> ContextWindow, VkQueueFlags RequestedQu
 	CreateSurface();
 	ChoosePhysicalDevice();
 	CreateLogicalDevice();
+
+	CreateMemoryAllocatior();
 }
 
 Context::~Context()
 {
+	vmaDestroyAllocator(Allocator);
+
 	vkDestroyDevice(Device, nullptr);
 
 	if(Surface != VK_NULL_HANDLE)
@@ -520,6 +524,20 @@ bool Context::IsValidationLayersSupported()
 	}
 
 	return true;
+}
+
+void Context::CreateMemoryAllocatior()
+{
+	VmaAllocatorCreateInfo AllocInfo{};
+#if defined(VK_KHR_buffer_device_address) && defined(_WIN32)
+	AllocInfo.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+#endif
+	AllocInfo.physicalDevice = GPUDevice.GetVkPhysicalDevice();
+	AllocInfo.device = Device;
+	AllocInfo.instance = Instance;
+	AllocInfo.vulkanApiVersion = ApplicationInfo.apiVersion;
+
+	VK_CHECK(vmaCreateAllocator(&AllocInfo, &Allocator));
 }
 
 }
