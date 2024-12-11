@@ -103,6 +103,8 @@ struct PhysicalDeviceFeatures
 	VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM FragmentDensityMapOffsetFeatures{};
 };
 
+class Swapchain;
+
 class Context final
 {
 public:
@@ -110,6 +112,10 @@ public:
 
 	Context(std::shared_ptr<Window> ContextWindow, VkQueueFlags RequestedQueueTypes = VK_QUEUE_GRAPHICS_BIT);
 	~Context();
+
+	VkDevice GetDevice() const { return Device; }
+
+	inline VmaAllocator GetAllocator() const { return Allocator; }
 
 	static void EndableDefaultFeatures();
 	static void EnableIndirectRenderingFeature();
@@ -159,6 +165,8 @@ private:
 	VmaAllocator Allocator;
 
 	VkQueueFlags RequestedQueues;
+
+	std::unique_ptr<Swapchain> SwapChain;
 
 	// Main queue
 	VkQueue PresentQueue;

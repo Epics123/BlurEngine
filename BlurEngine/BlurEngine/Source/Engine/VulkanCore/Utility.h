@@ -24,3 +24,31 @@
 		  (HashCombine(seed, rest), ...);
 	  };
   }
+
+  namespace VulkanUtils
+  {
+	  VkImageViewType VulkanUtils::ImageTypeToImageViewType(VkImageType ImageType, VkImageCreateFlags Flags, bool Multiview)
+	  {
+		  switch (ImageType)
+		  {
+		  case VK_IMAGE_TYPE_1D:
+			  return Multiview ? VK_IMAGE_VIEW_TYPE_1D_ARRAY : VK_IMAGE_VIEW_TYPE_1D;
+		  case VK_IMAGE_TYPE_2D:
+		  {
+			  if (Flags & VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT)
+			  {
+				  return VK_IMAGE_VIEW_TYPE_CUBE;
+			  }
+			  return Multiview ? VK_IMAGE_VIEW_TYPE_2D_ARRAY : VK_IMAGE_VIEW_TYPE_2D;
+		  }
+		  case VK_IMAGE_TYPE_3D:
+			  return VK_IMAGE_VIEW_TYPE_3D;
+		  case VK_IMAGE_TYPE_MAX_ENUM:
+			  return VK_IMAGE_VIEW_TYPE_MAX_ENUM;
+		  default:
+			  break;
+		  }
+
+		  return VK_IMAGE_VIEW_TYPE_2D;
+	  }
+  }

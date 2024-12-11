@@ -30,6 +30,12 @@
     <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h">
       <Filter>VulkanCore</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Swapchain.h">
+      <Filter>VulkanCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Texture.h">
+      <Filter>VulkanCore</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Utility.h">
       <Filter>VulkanCore</Filter>
     </ClInclude>
@@ -57,7 +63,16 @@
     <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp">
       <Filter>VulkanCore</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\Swapchain.cpp">
+      <Filter>VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\Texture.cpp">
+      <Filter>VulkanCore</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Utility.cpp">
+      <Filter>VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\VmaUsage.cpp">
       <Filter>VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp">
