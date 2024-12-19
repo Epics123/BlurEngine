@@ -117,6 +117,14 @@ public:
 
 	inline VmaAllocator GetAllocator() const { return Allocator; }
 
+	SwapChainSupportDetails GetSupportDetails();
+	VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& AvailableFormats);
+	VkPresentModeKHR ChooseSwapchainPresentMode(const std::vector<VkPresentModeKHR>& AvailablePresentModes, VkPresentModeKHR DesiredPresentMode);
+	VkExtent2D ChooseSwapchainExtents(const VkSurfaceCapabilitiesKHR& Capabilities, VkExtent2D WindowExtent);
+	Swapchain* GetSwapchain() const { return SwapChain.get(); }
+
+	void CreateSwapchain(VkFormat Format, VkSurfaceFormatKHR SurfaceFormat, VkPresentModeKHR PresentMode, const VkExtent2D& Extent);
+
 	static void EndableDefaultFeatures();
 	static void EnableIndirectRenderingFeature();
 	static void EnableSyncronizationFeature();
@@ -167,6 +175,7 @@ private:
 	VkQueueFlags RequestedQueues;
 
 	std::unique_ptr<Swapchain> SwapChain;
+	SwapChainSupportDetails SupportDetails;
 
 	// Main queue
 	VkQueue PresentQueue;

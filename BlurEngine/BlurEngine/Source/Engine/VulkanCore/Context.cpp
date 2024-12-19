@@ -86,7 +86,10 @@ Context::~Context()
 {
 	vmaDestroyAllocator(Allocator);
 
+	SwapChain.reset(); // Make sure swapchain is destroyed before destroying the VkDevice
+	
 	vkDestroyDevice(Device, nullptr);
+
 
 	if(Surface != VK_NULL_HANDLE)
 	{
@@ -99,6 +102,62 @@ Context::~Context()
 	}
 
 	vkDestroyInstance(Instance, nullptr);
+}
+
+SwapChainSupportDetails Context::GetSupportDetails()
+{
+	QuerySwapChainSupport(GPUDevice.GetVkPhysicalDevice(), SupportDetails);
+	return SupportDetails;
+}
+
+VkSurfaceFormatKHR Context::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& AvailableFormats)
+{
+	for(const VkSurfaceFormatKHR Format : AvailableFormats)
+	{
+		if(Format.format == VK_FORMAT_B8G8R8A8_SRGB && Format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+		{
+			return Format;
+		}
+	}
+
+	return AvailableFormats[0];
+}
+
+VkPresentModeKHR Context::ChooseSwapchainPresentMode(const std::vector<VkPresentModeKHR>& AvailablePresentModes, VkPresentModeKHR DesiredPresentMode)
+{
+	for(const VkPresentModeKHR PresentMode : AvailablePresentModes)
+	{
+		if(PresentMode == DesiredPresentMode)
+		{
+			BE_INFO("Present Mode: {0}", VulkanUtils::PresentModeToString(PresentMode));
+			return PresentMode;
+		}
+	}
+
+	BE_INFO("Desired present mode not available. Defaulting to: {0}", VulkanUtils::PresentModeToString(DefaultPresentMode));
+	return DefaultPresentMode;
+}
+
+VkExtent2D Context::ChooseSwapchainExtents(const VkSurfaceCapabilitiesKHR& Capabilities, VkExtent2D WindowExtent)
+{
+	if(Capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+	{
+		return Capabilities.currentExtent;
+	}
+	else
+	{
+		VkExtent2D ActualExtent = WindowExtent;
+		ActualExtent.width = std::max(Capabilities.minImageExtent.width, std::min(Capabilities.maxImageExtent.width, ActualExtent.width));
+		ActualExtent.height = std::max(Capabilities.minImageExtent.height, std::min(Capabilities.maxImageExtent.height, ActualExtent.height));
+
+		return ActualExtent;
+	}
+}
+
+void Context::CreateSwapchain(VkFormat Format, VkSurfaceFormatKHR SurfaceFormat, VkPresentModeKHR PresentMode, const VkExtent2D& Extent)
+{
+	ASSERT(Surface != VK_NULL_HANDLE, "Trying to create a swapchain without a surface! The context must be provided a valid surface to create a swapchain.")
+	SwapChain = std::make_unique<Swapchain>(*this, GPUDevice, Surface, PresentQueue, SurfaceFormat, PresentMode, Extent);
 }
 
 void Context::EndableDefaultFeatures()

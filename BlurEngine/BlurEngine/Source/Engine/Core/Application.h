@@ -33,5 +33,5 @@ private:
 	float LastFrameTime;
 
 	std::shared_ptr<class Window> AppWindow = nullptr;
-	Renderer AppRenderer;
+	std::unique_ptr<Renderer> AppRenderer;
 };

@@ -17,7 +17,8 @@ public:
 	void Init(std::shared_ptr<class Window> AppWindow);
 
 private:
-	std::unique_ptr<VulkanCore::Context> RenderingContext;
+	uint32_t FramesInFlight;
 
+	std::unique_ptr<VulkanCore::Context> RenderingContext;
 	std::shared_ptr<class Window> ActiveWindow;
 };

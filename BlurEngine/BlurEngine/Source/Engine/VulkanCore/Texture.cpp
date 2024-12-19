@@ -100,7 +100,7 @@ namespace VulkanCore
 		CreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		CreateInfo.flags = VkImageViewCreateFlags(0);
 		CreateInfo.image = TextureImage;
-		CreateInfo.viewType = ViewType;
+		CreateInfo.viewType = ImageViewType;
 		CreateInfo.format = TextureFormat;
 
 		VkComponentMapping Components;

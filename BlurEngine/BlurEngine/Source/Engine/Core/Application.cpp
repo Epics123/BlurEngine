@@ -12,6 +12,7 @@ Application::Application(const std::string& AppName, const uint32_t AppWidth, co
 	:Name{AppName}, Width{AppWidth}, Height{AppHeight}
 {
 	AppWindow = std::make_shared<Window>(Name, Width, Height, true);
+	AppRenderer = std::make_unique<Renderer>();
 }
 
 void Application::Run()
@@ -19,7 +20,7 @@ void Application::Run()
 	if(AppWindow)
 	{
 		AppWindow->Init(KeyCallback, CursorPosCallback, MouseButtonCallback, ScrollCallback, FramebufferResizeCallback, this);
-		AppRenderer.Init(AppWindow);
+		AppRenderer->Init(AppWindow);
 
 		Tick();
 	}

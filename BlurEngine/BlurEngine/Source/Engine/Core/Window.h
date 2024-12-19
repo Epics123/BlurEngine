@@ -27,6 +27,7 @@ public:
 	const std::string& GetName() { return Name; }
 
 	GLFWwindow* GetGLFWWindow() const { return GLFWWindow; }
+	VkExtent2D GetExtent() const { return { static_cast<uint32_t>(Width), static_cast<uint32_t>(Height) }; }
 
 	void CreateWindowSurface(VkInstance Instance, VkSurfaceKHR* Surface);
 

@@ -48,6 +48,9 @@ namespace VulkanCore
 							 VkColorSpaceKHR ImageColorSpace, VkPresentModeKHR PresentMode, VkExtent2D Extent, VkSwapchainKHR OldSwapchain = VK_NULL_HANDLE);
 		void CreateSwapchainImages(const Context& DeviceContext, VkFormat Format, const VkExtent2D& Extent);
 
+		void CreateSemaphores();
+		void CreateFence();
+
 	private:
 		VkDevice VulkanDevice = VK_NULL_HANDLE;
 		VkSwapchainKHR VulkanSwapchain = VK_NULL_HANDLE;
