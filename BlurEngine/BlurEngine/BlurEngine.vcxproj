@@ -123,6 +123,10 @@
     <ClCompile Include="Source\Engine\VulkanCore\VmaUsage.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Resources\Shaders\SimpleTriangle.frag" />
+    <None Include="Source\Resources\Shaders\SimpleTriangle.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

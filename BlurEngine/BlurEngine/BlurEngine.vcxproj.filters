@@ -1,88 +1,107 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Core">
-      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Renderer">
-      <UniqueIdentifier>{948B5FDE-004C-DB14-C986-2492350620F1}</UniqueIdentifier>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{130D9B61-7FC2-1357-08B7-0D2E746B0A5B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="VulkanCore">
-      <UniqueIdentifier>{7F0AA990-6BC2-EADD-D4C9-C339C0A085CE}</UniqueIdentifier>
+    <Filter Include="Engine\Core\Renderer">
+      <UniqueIdentifier>{19B6ADAC-0545-3776-AE63-4B719AD1471C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\VulkanCore">
+      <UniqueIdentifier>{24BBBA8B-90D1-B821-D948-4443459E89A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{000BCD17-6C75-818E-B5B3-3234215D5FE3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{D92F8C3C-4546-8AD2-8EBD-15F4FA125B5A}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Core\Application.h">
-      <Filter>Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Logger.h">
-      <Filter>Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Renderer\Renderer.h">
-      <Filter>Core\Renderer</Filter>
+      <Filter>Engine\Core\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Window.h">
-      <Filter>Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Context.h">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\ShaderModule.h">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Swapchain.h">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Texture.h">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Utility.h">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\Application.cpp">
-      <Filter>Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\Logger.cpp">
-      <Filter>Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\Renderer\Renderer.cpp">
-      <Filter>Core\Renderer</Filter>
+      <Filter>Engine\Core\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\Window.cpp">
-      <Filter>Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Main.cpp" />
+    <ClCompile Include="Source\Engine\Main.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Context.cpp">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\ShaderModule.cpp">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Swapchain.cpp">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Texture.cpp">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Utility.cpp">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\VmaUsage.cpp">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp">
-      <Filter>VulkanCore</Filter>
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Resources\Shaders\SimpleTriangle.frag">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Source\Resources\Shaders\SimpleTriangle.vert">
+      <Filter>Resources\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

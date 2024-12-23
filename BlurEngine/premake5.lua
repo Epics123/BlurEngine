@@ -24,15 +24,15 @@ project "BlurEngine"
 		"%{prj.name}/Source/Engine/**.h",
 		"%{prj.name}/Source/Engine/**.cpp",
 		"%{prj.name}/Source/Engine/Core/**.cpp",
-		"%{prj.name}/Source/Engine/VulkanCore/**.cpp"
+		"%{prj.name}/Source/Engine/VulkanCore/**.cpp",
 		--"%{prj.name}/Libraries/ImGui/**.h",
 		--"%{prj.name}/Libraries/ImGui/**.cpp",
 		--"%{prj.name}/Libraries/ImGui/ImGuizmo/**.h",
 		--"%{prj.name}/Libraries/ImGui/ImGuizmo/**.cpp",
 		--"%{prj.name}/Libraries/yaml/src/**.h",
 		--"%{prj.name}/Libraries/yaml/src/**.cpp",
-		--"%{prj.name}/MainApp/resources/**.vert",
-		--"%{prj.name}/MainApp/resources/**.frag",
+		"%{prj.name}/Source/Resources/Shaders/**.vert",
+		"%{prj.name}/Source/Resources/Shaders/**.frag"
 	}
 
 	includedirs
