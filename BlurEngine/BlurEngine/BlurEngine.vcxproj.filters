@@ -30,6 +30,9 @@
     <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h">
       <Filter>VulkanCore</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\ShaderModule.h">
+      <Filter>VulkanCore</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Swapchain.h">
       <Filter>VulkanCore</Filter>
     </ClInclude>
@@ -61,6 +64,9 @@
       <Filter>VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp">
+      <Filter>VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\ShaderModule.cpp">
       <Filter>VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Swapchain.cpp">

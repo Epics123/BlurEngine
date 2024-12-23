@@ -1,5 +1,42 @@
 #include "Utility.h"
 
+#include <fstream>
+#include <iostream>
+
+namespace Util
+{
+
+	std::vector<char> ReadFile(const std::string& Filepath, bool IsBinary)
+	{
+		std::ios_base::openmode Mode = std::ios::ate;
+		if (IsBinary)
+		{
+			Mode |= std::ios::binary;
+		}
+
+		std::ifstream File(Filepath, Mode);
+
+		size_t FileSize = (size_t)File.tellg();
+		if (!IsBinary)
+		{
+			FileSize++; // Add extra for null char at end
+		}
+
+		std::vector<char> Buffer(FileSize);
+		File.seekg(0);
+		File.read(reinterpret_cast<char*>(Buffer.data()), FileSize);
+		File.close();
+
+		if (!IsBinary)
+		{
+			Buffer[Buffer.size() - 1] = '\0';
+		}
+
+		return Buffer;
+	}
+
+}
+
 namespace VulkanUtils
 {
 	
