@@ -39,6 +39,9 @@
     <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\RenderPass.h">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\ShaderModule.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
@@ -75,6 +78,9 @@
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\RenderPass.cpp">
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\ShaderModule.cpp">

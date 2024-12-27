@@ -4,6 +4,7 @@
 #include "VulkanCommon.h"
 #include "PhysicalDevice.h"
 #include "ShaderModule.h"
+#include "RenderPass.h"
 
 #include "../Core/Window.h"
 
@@ -129,6 +130,9 @@ public:
 	std::shared_ptr<ShaderModule> CreateShaderModule(const std::string& Filepath, VkShaderStageFlagBits Stages, const std::string& Name = "");
 	std::shared_ptr<ShaderModule> CreateShaderModule(const std::string& Filepath, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name = "");
 	std::shared_ptr<ShaderModule> CreateShaderModule(const std::vector<char>& ShaderCode, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name = "");
+
+	std::shared_ptr<RenderPass> CreateRenderPass(const std::vector<RenderPassInitInfo>& InitInfos, VkPipelineBindPoint BindPoint, 
+												 std::vector<std::shared_ptr<Texture>> ResolveAttachments = {}, const std::string& Name = "");
 
 	static void EndableDefaultFeatures();
 	static void EnableIndirectRenderingFeature();

@@ -47,4 +47,14 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	const std::shared_ptr<VulkanCore::ShaderModule> VertexShader = RenderingContext->CreateShaderModule(VertexShaderPath.string(), VK_SHADER_STAGE_VERTEX_BIT);
 	const std::shared_ptr<VulkanCore::ShaderModule> FragmentShader = RenderingContext->CreateShaderModule(VertexShaderPath.string(), VK_SHADER_STAGE_FRAGMENT_BIT);
 
+	// TODO: Create Framebuffers
+
+	VulkanCore::RenderPassInitInfo PassInitInfo;
+	PassInitInfo.AttachmentTexture = RenderingContext->GetSwapchain()->GetTexture(0);
+	PassInitInfo.LoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	PassInitInfo.StoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+	PassInitInfo.FinalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+	std::shared_ptr<VulkanCore::RenderPass> RenderPass = RenderingContext->CreateRenderPass({PassInitInfo}, VK_PIPELINE_BIND_POINT_GRAPHICS, {}, "Simple Triangle");
+
 }

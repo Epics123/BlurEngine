@@ -176,6 +176,11 @@ std::shared_ptr<VulkanCore::ShaderModule> Context::CreateShaderModule(const std:
 	return std::make_shared<ShaderModule>(*this, ShaderCode, EntryPoint, Stages, Name);
 }
 
+std::shared_ptr<VulkanCore::RenderPass> Context::CreateRenderPass(const std::vector<RenderPassInitInfo>& InitInfos, VkPipelineBindPoint BindPoint, std::vector<std::shared_ptr<Texture>> ResolveAttachments /*= {}*/, const std::string& Name /*= ""*/)
+{
+	return std::make_shared<RenderPass>(*this, InitInfos, ResolveAttachments, BindPoint, Name);
+}
+
 void Context::EndableDefaultFeatures()
 {
 	sPhysicalDeviceFeatures.Vulkan12Features.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;

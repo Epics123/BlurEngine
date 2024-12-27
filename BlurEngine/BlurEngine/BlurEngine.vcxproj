@@ -102,6 +102,7 @@
     <ClInclude Include="Source\Engine\Core\Window.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Context.h" />
     <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h" />
+    <ClInclude Include="Source\Engine\VulkanCore\RenderPass.h" />
     <ClInclude Include="Source\Engine\VulkanCore\ShaderModule.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Swapchain.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Texture.h" />
@@ -116,6 +117,7 @@
     <ClCompile Include="Source\Engine\Main.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Context.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\RenderPass.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\ShaderModule.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Swapchain.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Texture.cpp" />
