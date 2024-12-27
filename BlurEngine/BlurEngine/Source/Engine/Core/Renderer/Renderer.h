@@ -5,6 +5,7 @@
 #include "Window.h"
 
 #include <memory>
+#include <filesystem>
 
 class Renderer
 {
@@ -15,6 +16,9 @@ public:
 	~Renderer();
 
 	void Init(std::shared_ptr<class Window> AppWindow);
+
+public:
+	static std::filesystem::path sShaderDirectory;
 
 private:
 	uint32_t FramesInFlight;

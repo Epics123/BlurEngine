@@ -1,7 +1,11 @@
 #include "Renderer.h"
 #include "../VulkanCore/Swapchain.h"
 
+#include "../VulkanCore/ShaderModule.h" // Temporary
+
 #include <vulkan/vulkan.h>
+
+std::filesystem::path Renderer::sShaderDirectory;
 
 Renderer::Renderer()
 {
@@ -33,4 +37,14 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	RenderingContext->CreateSwapchain(SwapchainFormat, SwapchainSurfaceFormat, SwapchainPresentMode, SwapchainExtent);
 	
 	FramesInFlight = RenderingContext->GetSwapchain()->GetImageCount();
+
+	Renderer::sShaderDirectory = std::filesystem::current_path() / "Source/Resources/Shaders";
+	Renderer::sShaderDirectory.make_preferred();
+
+	const auto VertexShaderPath = Renderer::sShaderDirectory / "SimpleTriangle.vert";
+	const auto FragShaderPath = Renderer::sShaderDirectory / "SimpleTriangle.frag";
+
+	const std::shared_ptr<VulkanCore::ShaderModule> VertexShader = RenderingContext->CreateShaderModule(VertexShaderPath.string(), VK_SHADER_STAGE_VERTEX_BIT);
+	const std::shared_ptr<VulkanCore::ShaderModule> FragmentShader = RenderingContext->CreateShaderModule(VertexShaderPath.string(), VK_SHADER_STAGE_FRAGMENT_BIT);
+
 }

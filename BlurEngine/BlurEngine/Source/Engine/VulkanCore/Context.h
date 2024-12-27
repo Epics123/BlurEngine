@@ -3,6 +3,7 @@
 #include "Utility.h"
 #include "VulkanCommon.h"
 #include "PhysicalDevice.h"
+#include "ShaderModule.h"
 
 #include "../Core/Window.h"
 
@@ -124,6 +125,10 @@ public:
 	Swapchain* GetSwapchain() const { return SwapChain.get(); }
 
 	void CreateSwapchain(VkFormat Format, VkSurfaceFormatKHR SurfaceFormat, VkPresentModeKHR PresentMode, const VkExtent2D& Extent);
+
+	std::shared_ptr<ShaderModule> CreateShaderModule(const std::string& Filepath, VkShaderStageFlagBits Stages, const std::string& Name = "");
+	std::shared_ptr<ShaderModule> CreateShaderModule(const std::string& Filepath, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name = "");
+	std::shared_ptr<ShaderModule> CreateShaderModule(const std::vector<char>& ShaderCode, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name = "");
 
 	static void EndableDefaultFeatures();
 	static void EnableIndirectRenderingFeature();

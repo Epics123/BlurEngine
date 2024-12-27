@@ -4,16 +4,16 @@
 
 #include <glslang/Public/ShaderLang.h>
 
-class Context;
-
 namespace VulkanCore
 {
+	class Context;
+
 	class ShaderModule
 	{
 	public:
-		ShaderModule(const Context& DeviceContext, const std::string& Filepath, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name);
-		ShaderModule(const Context&	DeviceContext, const std::vector<char>& Data, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name);
-		ShaderModule(const Context& DeviceContext, const std::string& Filepath, VkShaderStageFlagBits Stages, const std::string& Name);
+		explicit ShaderModule(const Context& DeviceContext, const std::string& Filepath, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name);
+		explicit ShaderModule(const Context& DeviceContext, const std::vector<char>& Data, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name);
+		explicit ShaderModule(const Context& DeviceContext, const std::string& Filepath, VkShaderStageFlagBits Stages, const std::string& Name);
 
 		~ShaderModule();
 

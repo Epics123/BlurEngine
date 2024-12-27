@@ -81,7 +81,32 @@ project "BlurEngine"
 
 	filter "configurations:Debug"
 		symbols "On"
-		buildoptions {"/wd4996"}
+		staticruntime "Off"
+		buildoptions {"/wd4996", "/wd4099"}
+		links
+		{
+			"glslangd.lib",
+			"glslang-default-resource-limitsd.lib",
+			"GenericCodeGend.lib",
+			"SPIRVd.lib",
+			"SPIRV-Toolsd.lib",
+			"SPIRV-Tools-optd.lib",
+			"OSDependentd.lib",
+			"MachineIndependentd.lib"
+		}
 
 	filter "configurations:Release"
 		optimize "On"
+		staticruntime "Off"
+		runtime "Release"
+		links
+		{
+			"glslang.lib",
+			"glslang-default-resource-limits.lib",
+			"GenericCodeGen.lib",
+			"SPIRV.lib",
+			"SPIRV-Tools.lib",
+			"SPIRV-Tools-opt.lib",
+			"OSDependent.lib",
+			"MachineIndependent.lib"
+		}

@@ -1,5 +1,6 @@
 #include "Context.h"
 #include "Swapchain.h"
+#include "Utility.h"
 
 #include "../Core/Logger.h"
 
@@ -158,6 +159,21 @@ void Context::CreateSwapchain(VkFormat Format, VkSurfaceFormatKHR SurfaceFormat,
 {
 	ASSERT(Surface != VK_NULL_HANDLE, "Trying to create a swapchain without a surface! The context must be provided a valid surface to create a swapchain.")
 	SwapChain = std::make_unique<Swapchain>(*this, GPUDevice, Surface, PresentQueue, SurfaceFormat, PresentMode, Extent);
+}
+
+std::shared_ptr<VulkanCore::ShaderModule> Context::CreateShaderModule(const std::string& Filepath, VkShaderStageFlagBits Stages, const std::string& Name /*= ""*/)
+{
+	return std::make_shared<ShaderModule>(*this, Filepath, Stages, Name);
+}
+
+std::shared_ptr<VulkanCore::ShaderModule> Context::CreateShaderModule(const std::string& Filepath, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name /*= ""*/)
+{
+	return std::make_shared<ShaderModule>(*this, Filepath, EntryPoint, Stages, Name);
+}
+
+std::shared_ptr<VulkanCore::ShaderModule> Context::CreateShaderModule(const std::vector<char>& ShaderCode, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name /*= ""*/)
+{
+	return std::make_shared<ShaderModule>(*this, ShaderCode, EntryPoint, Stages, Name);
 }
 
 void Context::EndableDefaultFeatures()
@@ -532,7 +548,7 @@ void Context::EnumerateGLFWExtensions()
 
 void Context::SetupDebugMessenger()
 {
-	if(bEnableValidationLayers && !IsValidationLayersSupported())
+	if(!bEnableValidationLayers || !IsValidationLayersSupported())
 	{
 		return;
 	}
@@ -558,6 +574,7 @@ void Context::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEX
 
 bool Context::IsValidationLayersSupported()
 {
+#if _DEBUG
 	uint32_t LayerCount;
 	vkEnumerateInstanceLayerProperties(&LayerCount, nullptr);
 
@@ -584,6 +601,9 @@ bool Context::IsValidationLayersSupported()
 	}
 
 	return true;
+#endif
+
+	return false;
 }
 
 void Context::CreateMemoryAllocatior()

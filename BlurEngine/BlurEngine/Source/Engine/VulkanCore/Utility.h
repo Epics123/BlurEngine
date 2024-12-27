@@ -27,7 +27,7 @@
 		  (HashCombine(seed, rest), ...);
 	  };
 
-	  bool FileEndsWith(const char* Filepath, const char* Extension)
+	  inline bool FileEndsWith(const char* Filepath, const char* Extension)
 	  {
 		return (strstr(Filepath, Extension) - Filepath) == (strlen(Filepath) - strlen(Extension));
 	  }

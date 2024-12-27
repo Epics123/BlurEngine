@@ -1,4 +1,5 @@
 #include "Utility.h"
+#include "Logger.h"
 
 #include <fstream>
 #include <iostream>
@@ -15,6 +16,11 @@ namespace Util
 		}
 
 		std::ifstream File(Filepath, Mode);
+
+		if(File.fail())
+		{
+			BE_CRITICAL("Failed to open file: {0}", Filepath)
+		}
 
 		size_t FileSize = (size_t)File.tellg();
 		if (!IsBinary)

@@ -69,7 +69,7 @@ namespace VulkanCore
 	}
 
 	ShaderModule::ShaderModule(const Context& DeviceContext, const std::vector<char>& Data, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name)
-		: Device{DeviceContext.GetDevice()}, ShaderEntryPoint{EntryPoint}, ShaderStageFlags{Stages}
+		: Device{ DeviceContext.GetDevice() }, ShaderEntryPoint{ EntryPoint }, ShaderStageFlags{ Stages }
 	{
 		DebugName = "Shader Module: " + Name;
 		CreateShader(Data, ShaderEntryPoint, DebugName);
@@ -156,7 +156,7 @@ namespace VulkanCore
 		CustomIncluder Includer(ShaderDir);
 
 		std::string PreprocessedGLSL;
-		if(!TmpShader.preprocess(Resources, 460, ENoProfile, false, false, Messages, &PreprocessedGLSL, Includer));
+		if(!TmpShader.preprocess(Resources, 460, ENoProfile, false, false, Messages, &PreprocessedGLSL, Includer))
 		{
 			BE_ERROR("Preprocessing failed for shader: {0}", DebugName);
 			BE_ERROR("\t{0}", TmpShader.getInfoLog());
