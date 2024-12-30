@@ -92,6 +92,24 @@ namespace VulkanCore
 				TextureFormat == VK_FORMAT_D24_UNORM_S8_UINT || TextureFormat == VK_FORMAT_D32_SFLOAT_S8_UINT);
 	}
 
+	VkImageView Texture::GetImageView(uint32_t MipLevel)
+	{
+		ASSERT(MipLevel == UINT32_MAX || MipLevel < MipLevels, "GetImageView was provided an invalid mip level!");
+
+		if(MipLevel == UINT32_MAX)
+		{
+			return ImageView;
+		}
+
+		if(!ImageViewFramebuffers.contains(MipLevel))
+		{
+			const VkImageViewType ImageViewType = VulkanCore::ImageTypeToImageViewType(ImageType, Flags, bMultiview);
+			ImageViewFramebuffers[MipLevel] = CreateImageView(ImageViewType, TextureFormat, 1, VK_REMAINING_ARRAY_LAYERS, "Image View: " + DebugName);
+		}
+
+		return ImageViewFramebuffers[MipLevel];
+	}
+
 	VkImageView Texture::CreateImageView(VkImageViewType ImageViewType, VkFormat ImageFormat, uint32_t NumMips, uint32_t Layers, const std::string& Name)
 	{
 		const VkImageAspectFlags AspectMask = IsDepth() ? VK_IMAGE_ASPECT_DEPTH_BIT : (IsStencil() ? VK_IMAGE_ASPECT_STENCIL_BIT : VK_IMAGE_ASPECT_COLOR_BIT);

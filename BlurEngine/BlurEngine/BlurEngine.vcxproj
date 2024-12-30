@@ -96,6 +96,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="Source\Engine\Core\Application.h" />
     <ClInclude Include="Source\Engine\Core\Logger.h" />
     <ClInclude Include="Source\Engine\Core\Renderer\Renderer.h" />
@@ -110,6 +111,7 @@
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="Source\Engine\Core\Application.cpp" />
     <ClCompile Include="Source\Engine\Core\Logger.cpp" />
     <ClCompile Include="Source\Engine\Core\Renderer\Renderer.cpp" />

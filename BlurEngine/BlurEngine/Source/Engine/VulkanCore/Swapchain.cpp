@@ -31,7 +31,17 @@ namespace VulkanCore
 		vkDestroySwapchainKHR(VulkanDevice, VulkanSwapchain, nullptr);
 	}
 
-	void Swapchain::CreateSwapchain(const Context& DeviceContext, const PhysicalDevice& GPUDevice, VkSurfaceKHR Surface, VkFormat ImageFormat, 
+	std::shared_ptr<VulkanCore::Framebuffer> Swapchain::GetFramebuffer(uint32_t Index)
+	{
+		if(Index < 0 || Index >= (uint32_t)Framebuffers.size())
+		{
+			return Framebuffers[0];
+		}
+
+		return Framebuffers[Index];
+	}
+
+	void Swapchain::CreateSwapchain(const Context& DeviceContext, const PhysicalDevice& GPUDevice, VkSurfaceKHR Surface, VkFormat ImageFormat,
 									VkColorSpaceKHR ImageColorSpace, VkPresentModeKHR PresentMode, VkExtent2D Extent, VkSwapchainKHR OldSwapchain)
 	{
 		const uint32_t MinImageCount = GPUDevice.GetSurfaceCapabilities().minImageCount;
@@ -69,6 +79,8 @@ namespace VulkanCore
 		CreateSwapchainImages(DeviceContext, ImageFormat, Extent);
 		CreateSemaphores();
 		CreateFence();
+
+		Framebuffers.resize(NumImages);
 	}
 
 	void Swapchain::CreateSwapchainImages(const Context& DeviceContext, VkFormat Format, const VkExtent2D& Extent)

@@ -57,6 +57,9 @@
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
+    <ClInclude Include="Framebuffer.h">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\Application.cpp">
@@ -99,6 +102,9 @@
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Framebuffer.cpp">
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
   </ItemGroup>

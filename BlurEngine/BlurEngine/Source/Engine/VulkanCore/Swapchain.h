@@ -8,6 +8,7 @@ namespace VulkanCore
 	class Context;
 	class PhysicalDevice;
 	class Texture;
+	class Framebuffer;
 
 	class Swapchain final
 	{
@@ -43,6 +44,9 @@ namespace VulkanCore
 			return Images[Index];
 		}
 
+		std::shared_ptr<Framebuffer> GetFramebuffer(uint32_t Index);
+		std::vector<std::shared_ptr<Framebuffer>>& GetFramebuffers() { return Framebuffers; }
+
 	private:
 		void CreateSwapchain(const Context& DeviceContext, const PhysicalDevice& GPUDevice, VkSurfaceKHR Surface, VkFormat ImageFormat, 
 							 VkColorSpaceKHR ImageColorSpace, VkPresentModeKHR PresentMode, VkExtent2D Extent, VkSwapchainKHR OldSwapchain = VK_NULL_HANDLE);
@@ -67,5 +71,7 @@ namespace VulkanCore
 
 		VkSurfaceFormatKHR SwapchainSurfaceFormat;
 		VkPresentModeKHR CurrentPresentMode;
+
+		std::vector<std::shared_ptr<Framebuffer>> Framebuffers;
 	};
 }
