@@ -36,7 +36,13 @@
     <ClInclude Include="Source\Engine\VulkanCore\Context.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Framebuffer.h">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Pipeline.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\RenderPass.h">
@@ -55,9 +61,6 @@
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h">
-      <Filter>Engine\VulkanCore</Filter>
-    </ClInclude>
-    <ClInclude Include="Framebuffer.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,7 +83,13 @@
     <ClCompile Include="Source\Engine\VulkanCore\Context.cpp">
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\Framebuffer.cpp">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\Pipeline.cpp">
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\RenderPass.cpp">
@@ -102,9 +111,6 @@
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp">
-      <Filter>Engine\VulkanCore</Filter>
-    </ClCompile>
-    <ClCompile Include="Framebuffer.cpp">
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
   </ItemGroup>

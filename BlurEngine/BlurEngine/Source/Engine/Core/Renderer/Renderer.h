@@ -2,6 +2,7 @@
 
 #include "../VulkanCore/Utility.h"
 #include "../VulkanCore/Context.h"
+#include "../VulkanCore/Pipeline.h"
 #include "Window.h"
 
 #include <memory>
@@ -25,4 +26,6 @@ private:
 
 	std::unique_ptr<VulkanCore::Context> RenderingContext;
 	std::shared_ptr<class Window> ActiveWindow;
+
+	std::shared_ptr<VulkanCore::Pipeline> GraphicsPipeline;
 };

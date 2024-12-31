@@ -17,6 +17,10 @@ namespace VulkanCore
 
 		~ShaderModule();
 
+		VkShaderModule GetVkShaderModule() const { return VulkanShaderModule; }
+		VkShaderStageFlagBits GetShaderFlags() const { return ShaderStageFlags; }
+		const std::string& GetEntryPoint() const { return ShaderEntryPoint; }
+
 	private:
 		void CreateShader(const std::string& Filepath, const std::string& EntryPoint, const std::string& Name);
 		void CreateShader(const std::vector<char>& SpirV, const std::string& EntryPoint, const std::string& Name);
@@ -33,7 +37,7 @@ namespace VulkanCore
 		VkShaderModule VulkanShaderModule = VK_NULL_HANDLE;
 		VkShaderStageFlagBits ShaderStageFlags;
 
-		std::string ShaderEntryPoint;
+		std::string ShaderEntryPoint = "main";
 		std::string DebugName = "";
 	};
 }

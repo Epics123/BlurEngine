@@ -45,7 +45,7 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	const auto FragShaderPath = Renderer::sShaderDirectory / "SimpleTriangle.frag";
 
 	const std::shared_ptr<VulkanCore::ShaderModule> VertexShader = RenderingContext->CreateShaderModule(VertexShaderPath.string(), VK_SHADER_STAGE_VERTEX_BIT);
-	const std::shared_ptr<VulkanCore::ShaderModule> FragmentShader = RenderingContext->CreateShaderModule(VertexShaderPath.string(), VK_SHADER_STAGE_FRAGMENT_BIT);
+	const std::shared_ptr<VulkanCore::ShaderModule> FragmentShader = RenderingContext->CreateShaderModule(FragShaderPath.string(), VK_SHADER_STAGE_FRAGMENT_BIT);
 
 	VulkanCore::RenderPassInitInfo PassInitInfo;
 	PassInitInfo.AttachmentTexture = RenderingContext->GetSwapchain()->GetTexture(0);
@@ -55,4 +55,21 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 
 	std::shared_ptr<VulkanCore::RenderPass> RenderPass = RenderingContext->CreateRenderPass({PassInitInfo}, VK_PIPELINE_BIND_POINT_GRAPHICS, {}, "Simple Triangle");
 
+	VkViewport Viewport{};
+	Viewport.x = 0;
+	Viewport.y = 0;
+	Viewport.width = static_cast<float>(RenderingContext->GetSwapchain()->GetExtent().width);
+	Viewport.height = static_cast<float>(RenderingContext->GetSwapchain()->GetExtent().height);
+	Viewport.minDepth = 0.0f;
+	Viewport.maxDepth = 1.0f;
+
+	VulkanCore::GraphicsPipelineDescriptor GraphicsPipelineDesc{};
+	GraphicsPipelineDesc.VertexShader = VertexShader;
+	GraphicsPipelineDesc.FragmentShader = FragmentShader;
+	GraphicsPipelineDesc.ColorTextureFormats = {SwapchainFormat};
+	GraphicsPipelineDesc.FrontFace = VK_FRONT_FACE_CLOCKWISE;
+	GraphicsPipelineDesc.Viewport = Viewport;
+	GraphicsPipelineDesc.bDepthTestEnable = false;
+
+	GraphicsPipeline = RenderingContext->CreateGraphicsPipeline(GraphicsPipelineDesc, RenderPass->GetVkRenderPass(), "Simple Triangle");
 }

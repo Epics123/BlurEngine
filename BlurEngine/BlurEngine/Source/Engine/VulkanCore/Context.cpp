@@ -181,6 +181,16 @@ std::shared_ptr<VulkanCore::RenderPass> Context::CreateRenderPass(const std::vec
 	return std::make_shared<RenderPass>(*this, InitInfos, ResolveAttachments, BindPoint, Name);
 }
 
+std::shared_ptr<VulkanCore::Pipeline> Context::CreateGraphicsPipeline(const GraphicsPipelineDescriptor& Desc, VkRenderPass Pass, const std::string& Name)
+{
+	return std::make_shared<Pipeline>(*this, Desc, Pass, Name);
+}
+
+std::shared_ptr<VulkanCore::Pipeline> Context::CreateComputePipeline(const ComputePipelineDescriptor& Desc, const std::string& Name)
+{
+	return std::make_shared<Pipeline>(*this, Desc, Name);
+}
+
 void Context::EndableDefaultFeatures()
 {
 	sPhysicalDeviceFeatures.Vulkan12Features.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;

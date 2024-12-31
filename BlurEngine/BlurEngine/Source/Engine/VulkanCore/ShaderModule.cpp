@@ -76,7 +76,7 @@ namespace VulkanCore
 	}
 
 	ShaderModule::ShaderModule(const Context& DeviceContext, const std::string& Filepath, VkShaderStageFlagBits Stages, const std::string& Name)
-		: ShaderModule(DeviceContext, Filepath, "Main", Stages, Name)
+		: ShaderModule(DeviceContext, Filepath, "main", Stages, Name)
 	{
 
 	}
