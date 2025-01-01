@@ -6,6 +6,8 @@
 #include "ShaderModule.h"
 #include "RenderPass.h"
 #include "Pipeline.h"
+#include "CommandQueueManager.h"
+#include "Framebuffer.h"
 
 #include "../Core/Window.h"
 
@@ -137,6 +139,11 @@ public:
 
 	std::shared_ptr<Pipeline> CreateGraphicsPipeline(const GraphicsPipelineDescriptor& Desc, VkRenderPass Pass, const std::string& Name = "");
 	std::shared_ptr<Pipeline> CreateComputePipeline(const ComputePipelineDescriptor& Desc, const std::string& Name = "");
+
+	std::unique_ptr<CommandQueueManager> CreateGraphicsCommandQueue(uint32_t Count, uint32_t NumConcurrentCommands, int GraphicsQueueIndex = -1, const std::string Name = "");
+	CommandQueueManager CreateTransferCommandQueue(uint32_t Count, uint32_t NumConcurrentCommands, int TransferQueueIndex = -1, const std::string Name = "");
+
+	std::unique_ptr<Framebuffer> CreateFramebuffer(VkRenderPass Pass, const FramebufferCreateInfo& CreateInfo);
 	
 	static void EndableDefaultFeatures();
 	static void EnableIndirectRenderingFeature();

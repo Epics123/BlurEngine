@@ -45,7 +45,15 @@ namespace VulkanCore
 		}
 
 		std::shared_ptr<Framebuffer> GetFramebuffer(uint32_t Index);
+		void SetFramebuffer(std::shared_ptr<Framebuffer> NewFramebuffer, uint32_t Index);
 		std::vector<std::shared_ptr<Framebuffer>>& GetFramebuffers() { return Framebuffers; }
+
+		std::shared_ptr<Texture> AcquireImage();
+
+		VkSubmitInfo CreateSubmitInfo(const VkCommandBuffer* CmdBuffer, const VkPipelineStageFlags* SubmitStageMask, 
+									  bool bWaitForImageAvailable = true, bool bSignalImagePresented = true);
+
+		void Present();
 
 	private:
 		void CreateSwapchain(const Context& DeviceContext, const PhysicalDevice& GPUDevice, VkSurfaceKHR Surface, VkFormat ImageFormat, 

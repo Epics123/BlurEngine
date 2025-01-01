@@ -41,6 +41,50 @@ namespace VulkanCore
 		return Framebuffers[Index];
 	}
 
+	void Swapchain::SetFramebuffer(std::shared_ptr<Framebuffer> NewFramebuffer, uint32_t Index)
+	{
+		Framebuffers[Index] = NewFramebuffer;
+	}
+
+	std::shared_ptr<VulkanCore::Texture> Swapchain::AcquireImage()
+	{
+		VK_CHECK(vkWaitForFences(VulkanDevice, 1, &AcquireFence, VK_TRUE, UINT64_MAX));
+		VK_CHECK(vkResetFences(VulkanDevice, 1, &AcquireFence));
+		VK_CHECK(vkAcquireNextImageKHR(VulkanDevice, VulkanSwapchain, UINT64_MAX, ImageAvailable, AcquireFence, &ImageIndex));
+
+		return Images[ImageIndex];
+	}
+
+	VkSubmitInfo Swapchain::CreateSubmitInfo(const VkCommandBuffer* CmdBuffer, const VkPipelineStageFlags* SubmitStageMask, bool bWaitForImageAvailable, bool bSignalImagePresented)
+	{
+		VkSubmitInfo SubmitInfo{};
+		SubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		SubmitInfo.waitSemaphoreCount = bWaitForImageAvailable ? (ImageAvailable ? 1u : 0) : 0;
+		SubmitInfo.pWaitSemaphores = bWaitForImageAvailable ? &ImageAvailable : VK_NULL_HANDLE;
+		SubmitInfo.pWaitDstStageMask = SubmitStageMask;
+		SubmitInfo.commandBufferCount = 1;
+		SubmitInfo.pCommandBuffers = CmdBuffer;
+		SubmitInfo.signalSemaphoreCount = bSignalImagePresented ? (ImageRendered ? 1u : 0) : 0;
+		SubmitInfo.pSignalSemaphores = bSignalImagePresented ? &ImageRendered : VK_NULL_HANDLE;
+		SubmitInfo.pNext = VK_NULL_HANDLE;
+
+		return SubmitInfo;
+	}
+
+	void Swapchain::Present()
+	{
+		VkPresentInfoKHR PresentInfo{};
+		PresentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		PresentInfo.waitSemaphoreCount = 1;
+		PresentInfo.pWaitSemaphores = &ImageRendered;
+		PresentInfo.swapchainCount = 1;
+		PresentInfo.pSwapchains = &VulkanSwapchain;
+		PresentInfo.pImageIndices = &ImageIndex;
+		PresentInfo.pNext = VK_NULL_HANDLE;
+
+		VK_CHECK(vkQueuePresentKHR(SwapchainPresentQueue, &PresentInfo));
+	}
+
 	void Swapchain::CreateSwapchain(const Context& DeviceContext, const PhysicalDevice& GPUDevice, VkSurfaceKHR Surface, VkFormat ImageFormat,
 									VkColorSpaceKHR ImageColorSpace, VkPresentModeKHR PresentMode, VkExtent2D Extent, VkSwapchainKHR OldSwapchain)
 	{

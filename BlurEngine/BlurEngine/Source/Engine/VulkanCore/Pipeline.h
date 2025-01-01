@@ -4,6 +4,7 @@
 #include "Utility.h"
 
 #include <unordered_map>
+#include <list>
 
 namespace VulkanCore
 {
@@ -157,6 +158,10 @@ public:
 
 	VkPipeline GetVkPipeline() const { return VulkanPipeline; }
 
+	void Bind(VkCommandBuffer CmdBuffer);
+
+	void UpdateDescriptorSets();
+
 private:
 	void CreateGraphicsPipeline();
 	void CreateComputePipeline();
@@ -178,7 +183,14 @@ private:
 	ComputePipelineDescriptor ComputePipelineDesc;
 
 	std::unordered_map<uint32_t, DescriptorSet> DescriptorSets;
+	std::vector<VkWriteDescriptorSet> WriteDescSets;
 	VkDescriptorPool VulkanDescriptorPool = VK_NULL_HANDLE;
+
+	std::list<std::vector<VkDescriptorBufferInfo>> BufferInfos;
+	std::list<VkBufferView> BufferViewInfos;
+	std::list<std::vector<VkDescriptorImageInfo>> ImageInfos;
+
+	std::mutex Mutex;
 
 	std::string DebugName;
 };

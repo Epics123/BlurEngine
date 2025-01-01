@@ -28,6 +28,26 @@ namespace VulkanCore
 		}
 	}
 
+	void Pipeline::Bind(VkCommandBuffer CmdBuffer)
+	{
+		vkCmdBindPipeline(CmdBuffer, BindPoint, VulkanPipeline);
+		UpdateDescriptorSets();
+	}
+
+	void Pipeline::UpdateDescriptorSets()
+	{
+		if(!WriteDescSets.empty())
+		{
+			std::unique_lock<std::mutex> MutexLock(Mutex);
+			vkUpdateDescriptorSets(VulkanDevice, WriteDescSets.size(), WriteDescSets.data(), 0, nullptr);
+
+			WriteDescSets.clear();
+			BufferInfos.clear();
+			BufferViewInfos.clear();
+			ImageInfos.clear();
+		}
+	}
+
 	void Pipeline::CreateGraphicsPipeline()
 	{
 		const std::vector<VkSpecializationMapEntry>& VertexSpecConstants = GraphicsPipelineDesc.VertexSpecConstants;
@@ -183,7 +203,7 @@ namespace VulkanCore
 
 		VkGraphicsPipelineCreateInfo PipelineInfo{};
 		PipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		PipelineInfo.pNext = GraphicsPipelineDesc.bUseDynamicRendering ? &PipelineRenderingCreateInfo : nullptr;
+		PipelineInfo.pNext = GraphicsPipelineDesc.bUseDynamicRendering ? &PipelineRenderingCreateInfo : VK_NULL_HANDLE;
 		PipelineInfo.stageCount = uint32_t(ShaderStages.size());
 		PipelineInfo.pStages = ShaderStages.data();
 		PipelineInfo.pVertexInputState = &GraphicsPipelineDesc.VertexInputCreateInfo;
@@ -199,7 +219,6 @@ namespace VulkanCore
 		PipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 		PipelineInfo.basePipelineIndex = -1; // Optional
 		PipelineInfo.pTessellationState = VK_NULL_HANDLE;
-		PipelineInfo.pNext = VK_NULL_HANDLE;
 
 		DebugName = "Graphics Pipeline: " + DebugName;
 		const std::string ErrorMsg = "Failed to create " + DebugName + "!";

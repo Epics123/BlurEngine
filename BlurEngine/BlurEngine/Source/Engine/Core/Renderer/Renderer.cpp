@@ -35,6 +35,9 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	const VkExtent2D SwapchainExtent = RenderingContext->ChooseSwapchainExtents(SwapChainSupport.Capabilities, AppWindow->GetExtent());	
 	
 	RenderingContext->CreateSwapchain(SwapchainFormat, SwapchainSurfaceFormat, SwapchainPresentMode, SwapchainExtent);
+
+	RenderArea.offset = {0, 0};
+	RenderArea.extent = SwapchainExtent;
 	
 	FramesInFlight = RenderingContext->GetSwapchain()->GetImageCount();
 
@@ -53,7 +56,7 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	PassInitInfo.StoreOp = VK_ATTACHMENT_STORE_OP_STORE;
 	PassInitInfo.FinalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-	std::shared_ptr<VulkanCore::RenderPass> RenderPass = RenderingContext->CreateRenderPass({PassInitInfo}, VK_PIPELINE_BIND_POINT_GRAPHICS, {}, "Simple Triangle");
+	SimpleTrianglePass = RenderingContext->CreateRenderPass({PassInitInfo}, VK_PIPELINE_BIND_POINT_GRAPHICS, {}, "Simple Triangle");
 
 	VkViewport Viewport{};
 	Viewport.x = 0;
@@ -71,5 +74,64 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	GraphicsPipelineDesc.Viewport = Viewport;
 	GraphicsPipelineDesc.bDepthTestEnable = false;
 
-	GraphicsPipeline = RenderingContext->CreateGraphicsPipeline(GraphicsPipelineDesc, RenderPass->GetVkRenderPass(), "Simple Triangle");
+	GraphicsPipeline = RenderingContext->CreateGraphicsPipeline(GraphicsPipelineDesc, SimpleTrianglePass->GetVkRenderPass(), "Simple Triangle");
+
+	const uint32_t ImageCount = RenderingContext->GetSwapchain()->GetImageCount();
+	GraphicsCommandManager = RenderingContext->CreateGraphicsCommandQueue(ImageCount, ImageCount, -1, "Graphics Command Manager");
+}
+
+void Renderer::Draw(float DeltaTime)
+{
+	const std::shared_ptr<VulkanCore::Texture> SwapchainImage = RenderingContext->GetSwapchain()->AcquireImage();
+	const uint32_t SwapchainImageIndex = RenderingContext->GetSwapchain()->CurrentImageIndex();
+	
+	if(RenderingContext->GetSwapchain()->GetFramebuffers()[SwapchainImageIndex] == nullptr)
+	{
+		VulkanCore::FramebufferCreateInfo FramebufferInfo;
+		FramebufferInfo.Attachments = {SwapchainImage};
+		FramebufferInfo.DepthAttachment = nullptr;
+		FramebufferInfo.StencilAttachment = nullptr;
+		FramebufferInfo.Name = "Swapchain Framebuffer " + std::to_string(SwapchainImageIndex);
+
+		RenderingContext->GetSwapchain()->SetFramebuffer(RenderingContext->CreateFramebuffer(SimpleTrianglePass->GetVkRenderPass(), FramebufferInfo), SwapchainImageIndex);
+	}
+
+	VkCommandBuffer CmdBuffer = GraphicsCommandManager->BeginCmdBuffer();
+
+	constexpr VkClearValue ClearColor{ 0.0f, 0.0f, 0.0f, 0.0f };
+	VkRenderPassBeginInfo RenderPassInfo{};
+	RenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	RenderPassInfo.renderPass = SimpleTrianglePass->GetVkRenderPass();
+	RenderPassInfo.framebuffer = RenderingContext->GetSwapchain()->GetFramebuffer(SwapchainImageIndex)->GetVkFramebuffer();
+	RenderPassInfo.renderArea = RenderArea;
+	RenderPassInfo.clearValueCount = 1;
+	RenderPassInfo.pClearValues = &ClearColor;
+	RenderPassInfo.pNext = VK_NULL_HANDLE;
+
+	vkCmdBeginRenderPass(CmdBuffer, &RenderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	GraphicsPipeline->Bind(CmdBuffer);
+
+	vkCmdDraw(CmdBuffer, 3, 1, 0, 0); // TODO: figure out why triangle isn't drawing to swapchain image
+
+	vkCmdEndRenderPass(CmdBuffer);
+
+	GraphicsCommandManager->EndCmdBuffer(CmdBuffer);
+
+	constexpr VkPipelineStageFlags Flags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	const VkSubmitInfo SubmitInfo = RenderingContext->GetSwapchain()->CreateSubmitInfo(&CmdBuffer, &Flags);
+	GraphicsCommandManager->Submit(&SubmitInfo);
+	GraphicsCommandManager->ToNextCmdBuffer();
+
+	RenderingContext->GetSwapchain()->Present();
+}
+
+void Renderer::DeviceWaitIdle()
+{
+	vkDeviceWaitIdle(RenderingContext->GetDevice());
+}
+
+void Renderer::WaitForAllSubmits()
+{
+	GraphicsCommandManager->WaitForAllSubmissions();
 }

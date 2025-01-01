@@ -191,6 +191,37 @@ std::shared_ptr<VulkanCore::Pipeline> Context::CreateComputePipeline(const Compu
 	return std::make_shared<Pipeline>(*this, Desc, Name);
 }
 
+std::unique_ptr<VulkanCore::CommandQueueManager> Context::CreateGraphicsCommandQueue(uint32_t Count, uint32_t NumConcurrentCommands, int GraphicsQueueIndex, const std::string Name)
+{
+	if(GraphicsQueueIndex != -1)
+	{
+		ASSERT(GraphicsQueueIndex < GraphicsQueues.size(), "Not enough graphics queues available, specify a smaller queue index!");
+	}
+
+	const uint32_t FamilyIndex = GPUDevice.GetGraphicsFamilyIndex().value();
+	VkQueue GraphicsQueue = GraphicsQueueIndex != -1 ? GraphicsQueues[GraphicsQueueIndex] : GraphicsQueues[0];
+
+	return std::make_unique<CommandQueueManager>(*this, Count, NumConcurrentCommands, FamilyIndex, GraphicsQueue, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, Name);
+}
+
+VulkanCore::CommandQueueManager Context::CreateTransferCommandQueue(uint32_t Count, uint32_t NumConcurrentCommands, int TransferQueueIndex, const std::string Name)
+{
+	if (TransferQueueIndex != -1)
+	{
+		ASSERT(TransferQueueIndex < TransferQueues.size(), "Not enough transfer queues available, specify a smaller queue index!");
+	}
+
+	const uint32_t FamilyIndex = GPUDevice.GetTransferFamilyIndex().value();
+	VkQueue TransferQueue = TransferQueueIndex != -1 ? TransferQueues[TransferQueueIndex] : TransferQueues[0];
+
+	return CommandQueueManager(*this, Count, NumConcurrentCommands, FamilyIndex, TransferQueue, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, Name);
+}
+
+std::unique_ptr<VulkanCore::Framebuffer> Context::CreateFramebuffer(VkRenderPass Pass, const FramebufferCreateInfo& CreateInfo)
+{
+	return std::make_unique<Framebuffer>(*this, Pass, CreateInfo);
+}
+
 void Context::EndableDefaultFeatures()
 {
 	sPhysicalDeviceFeatures.Vulkan12Features.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;

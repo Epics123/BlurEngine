@@ -41,7 +41,13 @@ void Application::Tick()
 
 		glfwPollEvents();
 		ProcessInput(AppWindow->GetGLFWWindow());
+
+		AppRenderer->Draw(gDeltaTime);
 	}
+
+	AppRenderer->WaitForAllSubmits();
+
+	AppRenderer->DeviceWaitIdle();
 }
 
 void Application::KeyCallback(GLFWwindow* Window, int Key, int Scancode, int Action, int Mods)

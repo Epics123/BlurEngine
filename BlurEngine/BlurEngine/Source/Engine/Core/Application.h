@@ -24,6 +24,9 @@ private:
 
 	void ProcessInput(GLFWwindow* ActiveWindow);
 
+public:
+	std::string WorkingDirectory = "../BlurEngine";
+
 private:
 	std::string Name;
 
