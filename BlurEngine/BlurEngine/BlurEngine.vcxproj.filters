@@ -33,6 +33,12 @@
     <ClInclude Include="Source\Engine\Core\Window.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Buffer.h">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\CommandQueueManager.h">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\Context.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
@@ -79,6 +85,12 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\Main.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\Buffer.cpp">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\CommandQueueManager.cpp">
+      <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\Context.cpp">
       <Filter>Engine\VulkanCore</Filter>

@@ -100,6 +100,8 @@
     <ClInclude Include="Source\Engine\Core\Logger.h" />
     <ClInclude Include="Source\Engine\Core\Renderer\Renderer.h" />
     <ClInclude Include="Source\Engine\Core\Window.h" />
+    <ClInclude Include="Source\Engine\VulkanCore\Buffer.h" />
+    <ClInclude Include="Source\Engine\VulkanCore\CommandQueueManager.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Context.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Framebuffer.h" />
     <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h" />
@@ -117,6 +119,8 @@
     <ClCompile Include="Source\Engine\Core\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Engine\Core\Window.cpp" />
     <ClCompile Include="Source\Engine\Main.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\Buffer.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\CommandQueueManager.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Context.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Framebuffer.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp" />
