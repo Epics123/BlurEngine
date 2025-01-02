@@ -71,7 +71,7 @@ namespace VulkanCore
 		SubpassDesc.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		SubpassDesc.colorAttachmentCount = static_cast<uint32_t>(ColorAttachmentReferences.size());
 		SubpassDesc.pColorAttachments = ColorAttachmentReferences.data();
-		//SubpassDesc.pResolveAttachments = ResolveAttachmentReferences.data();
+		SubpassDesc.pResolveAttachments = ResolveAttachmentReferences.data();
 		SubpassDesc.pDepthStencilAttachment = DepthStencilAttachmentReference.has_value() ? &DepthStencilAttachmentReference.value() : nullptr;
 
 		std::array<VkSubpassDependency, 2> Dependencies;

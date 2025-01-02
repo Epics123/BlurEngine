@@ -144,6 +144,8 @@ public:
 	CommandQueueManager CreateTransferCommandQueue(uint32_t Count, uint32_t NumConcurrentCommands, int TransferQueueIndex = -1, const std::string Name = "");
 
 	std::unique_ptr<Framebuffer> CreateFramebuffer(VkRenderPass Pass, const FramebufferCreateInfo& CreateInfo);
+
+	void RecreateSwapchain(const VkExtent2D& NewExtent);
 	
 	static void EndableDefaultFeatures();
 	static void EnableIndirectRenderingFeature();

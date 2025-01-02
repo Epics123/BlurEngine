@@ -23,6 +23,8 @@ public:
 	void DeviceWaitIdle();
 	void WaitForAllSubmits();
 
+	void HandleWindowResized();
+
 public:
 	static std::filesystem::path sShaderDirectory;
 

@@ -25,6 +25,8 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	VulkanCore::Context::EnableSyncronizationFeature();
 	VulkanCore::Context::EnableBufferDeviceAddressFeature();
 
+	ActiveWindow = AppWindow;
+
 	RenderingContext = std::make_unique<VulkanCore::Context>(AppWindow, VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT);
 
 	const VulkanCore::SwapChainSupportDetails SwapChainSupport = RenderingContext->GetSupportDetails();
@@ -84,10 +86,15 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 
 void Renderer::Draw(float DeltaTime)
 {
+	if (ActiveWindow->WasResized())
+	{
+		HandleWindowResized();
+	}
+
 	const std::shared_ptr<VulkanCore::Texture> SwapchainImage = RenderingContext->GetSwapchain()->AcquireImage();
 	const uint32_t SwapchainImageIndex = RenderingContext->GetSwapchain()->CurrentImageIndex();
 	
-	if(RenderingContext->GetSwapchain()->GetFramebuffers()[SwapchainImageIndex] == nullptr)
+	if(RenderingContext->GetSwapchain()->GetFramebuffers()[SwapchainImageIndex] == nullptr || ActiveWindow->WasResized())
 	{
 		VulkanCore::FramebufferCreateInfo FramebufferInfo;
 		FramebufferInfo.Attachments = {SwapchainImage};
@@ -126,6 +133,8 @@ void Renderer::Draw(float DeltaTime)
 	GraphicsCommandManager->ToNextCmdBuffer();
 
 	RenderingContext->GetSwapchain()->Present();
+
+	ActiveWindow->SetFrameBufferResized(false);
 }
 
 void Renderer::DeviceWaitIdle()
@@ -136,4 +145,27 @@ void Renderer::DeviceWaitIdle()
 void Renderer::WaitForAllSubmits()
 {
 	GraphicsCommandManager->WaitForAllSubmissions();
+}
+
+void Renderer::HandleWindowResized()
+{
+	VkExtent2D NewExtent = ActiveWindow->GetExtent();
+
+	// Check if window is minimized 
+	while (NewExtent.width == 0 || NewExtent.height == 0)
+	{
+		NewExtent = ActiveWindow->GetExtent();
+		glfwWaitEvents();
+	}
+
+	vkDeviceWaitIdle(RenderingContext->GetDevice());
+
+	RenderingContext->RecreateSwapchain(NewExtent);
+
+	RenderArea.offset = { 0, 0 };
+	RenderArea.extent = RenderingContext->GetSwapchain()->GetExtent();
+
+#if _DEBUG
+	BE_INFO("Window resized to: {0} x {1}", NewExtent.width, NewExtent.height);
+#endif
 }

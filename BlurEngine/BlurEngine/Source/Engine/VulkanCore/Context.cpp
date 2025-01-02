@@ -222,6 +222,18 @@ std::unique_ptr<VulkanCore::Framebuffer> Context::CreateFramebuffer(VkRenderPass
 	return std::make_unique<Framebuffer>(*this, Pass, CreateInfo);
 }
 
+void Context::RecreateSwapchain(const VkExtent2D& NewExtent)
+{
+	ASSERT(Surface != VK_NULL_HANDLE, "Trying to recreate swapchain without a valid surface!");
+
+	SwapChainSupportDetails SupportDetails = GetSupportDetails();
+
+	VkExtent2D UpdatedExtent = ChooseSwapchainExtents(SupportDetails.Capabilities, NewExtent);
+
+	std::shared_ptr<Swapchain> OldSwapchain = std::move(SwapChain);
+	SwapChain = std::make_unique<Swapchain>(*this, GPUDevice, Surface, PresentQueue, UpdatedExtent, OldSwapchain);
+}
+
 void Context::EndableDefaultFeatures()
 {
 	sPhysicalDeviceFeatures.Vulkan12Features.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
