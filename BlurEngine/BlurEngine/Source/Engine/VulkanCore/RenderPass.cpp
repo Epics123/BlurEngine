@@ -71,7 +71,7 @@ namespace VulkanCore
 		SubpassDesc.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		SubpassDesc.colorAttachmentCount = static_cast<uint32_t>(ColorAttachmentReferences.size());
 		SubpassDesc.pColorAttachments = ColorAttachmentReferences.data();
-		SubpassDesc.pResolveAttachments = ResolveAttachmentReferences.data();
+		//SubpassDesc.pResolveAttachments = ResolveAttachmentReferences.data();
 		SubpassDesc.pDepthStencilAttachment = DepthStencilAttachmentReference.has_value() ? &DepthStencilAttachmentReference.value() : nullptr;
 
 		std::array<VkSubpassDependency, 2> Dependencies;
@@ -80,25 +80,25 @@ namespace VulkanCore
 
 		Dependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 		Dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT |
-			VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+									   VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 
 		Dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
 		Dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
-			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
-			VK_ACCESS_SHADER_READ_BIT;
+										VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
+										VK_ACCESS_SHADER_READ_BIT;
 
 		Dependencies[1].srcSubpass = 0;
 		Dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
 
 		Dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT |
-			VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+									   VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
 		Dependencies[1].dstStageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 
 		Dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
-			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+										VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 		Dependencies[1].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
-			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
-			VK_ACCESS_SHADER_READ_BIT;
+										VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
+										VK_ACCESS_SHADER_READ_BIT;
 
 		Dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT; // Not sure if these are needed
 		Dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;

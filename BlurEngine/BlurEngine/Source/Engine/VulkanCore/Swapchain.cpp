@@ -107,7 +107,7 @@ namespace VulkanCore
 		CreateInfo.imageColorSpace = ImageColorSpace;
 		CreateInfo.imageExtent = Extent;
 		CreateInfo.imageArrayLayers = 1;
-		CreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+		CreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		CreateInfo.imageSharingMode = IsPresentationQueueShared ? VK_SHARING_MODE_EXCLUSIVE : VK_SHARING_MODE_CONCURRENT;
 		CreateInfo.queueFamilyIndexCount = IsPresentationQueueShared ? 0u : 2u;
 		CreateInfo.pQueueFamilyIndices = IsPresentationQueueShared ? nullptr : FamilyIndices.data();
@@ -136,9 +136,9 @@ namespace VulkanCore
 		*/
 
 		uint32_t ImageCount = 0;
-		vkGetSwapchainImagesKHR(DeviceContext.GetDevice(), VulkanSwapchain, &ImageCount, nullptr);
+		VK_CHECK(vkGetSwapchainImagesKHR(DeviceContext.GetDevice(), VulkanSwapchain, &ImageCount, nullptr));
 		std::vector<VkImage> SwapchainImages(ImageCount);
-		vkGetSwapchainImagesKHR(DeviceContext.GetDevice(), VulkanSwapchain, &ImageCount, SwapchainImages.data());
+		VK_CHECK(vkGetSwapchainImagesKHR(DeviceContext.GetDevice(), VulkanSwapchain, &ImageCount, SwapchainImages.data()));
 
 		Images.reserve(ImageCount);
 		for(size_t i = 0; i < ImageCount; i++)

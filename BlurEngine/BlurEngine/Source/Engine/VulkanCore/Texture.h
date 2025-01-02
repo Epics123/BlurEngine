@@ -47,6 +47,7 @@ public:
 	VkImageLayout GetLayout() const { return ImageLayout; }
 	VkImageView GetImageView(uint32_t MipLevel);
 	VkExtent3D GetExtents() const { return TextureExtents; }
+	VkImage GetVkImage() const { return TextureImage; }
 
 private:
 	VkImageView CreateImageView(VkImageViewType ImageViewType, VkFormat ImageFormat, uint32_t NumMips, uint32_t Layers, const std::string& Name);

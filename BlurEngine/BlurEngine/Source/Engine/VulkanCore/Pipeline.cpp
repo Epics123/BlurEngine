@@ -180,7 +180,7 @@ namespace VulkanCore
 		DepthStencilInfo.depthWriteEnable = GraphicsPipelineDesc.bDepthWriteEnable;
 		DepthStencilInfo.depthCompareOp = GraphicsPipelineDesc.DepthCompareOperation;
 		DepthStencilInfo.depthBoundsTestEnable = VK_FALSE;
-		DepthStencilInfo.stencilTestEnable = VK_TRUE;
+		DepthStencilInfo.stencilTestEnable = VK_FALSE;
 		DepthStencilInfo.front = {};
 		DepthStencilInfo.back = {};
 		DepthStencilInfo.minDepthBounds = 0.0f;

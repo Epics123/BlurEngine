@@ -54,7 +54,7 @@ public:
 
 	VkExtent2D ToExtent2D()
 	{
-		return VkExtent2D{ static_cast<uint32_t>(std::abs(Viewport.width), static_cast<uint32_t>(std::abs(Viewport.height))) };
+		return VkExtent2D{ static_cast<uint32_t>(glm::abs(Viewport.width)), static_cast<uint32_t>(glm::abs(Viewport.height)) };
 	}
 
 	VkViewport ToVkViewport() { return Viewport; }

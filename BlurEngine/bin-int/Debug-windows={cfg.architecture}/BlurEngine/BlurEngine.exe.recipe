@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\eheil\source\repos\BlurEngine\BlurEngine\bin\Debug-windows={cfg.architecture}\BlurEngine\BlurEngine.exe</FullPath>
+      <FullPath>E:\Repos\BlurEngine\BlurEngine\bin\Debug-windows={cfg.architecture}\BlurEngine\BlurEngine.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

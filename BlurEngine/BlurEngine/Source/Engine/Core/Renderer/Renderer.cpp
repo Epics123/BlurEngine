@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "../VulkanCore/Swapchain.h"
+#include "../VulkanCore/Texture.h"
 
 #include "../VulkanCore/ShaderModule.h" // Temporary
 
@@ -54,6 +55,7 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	PassInitInfo.AttachmentTexture = RenderingContext->GetSwapchain()->GetTexture(0);
 	PassInitInfo.LoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	PassInitInfo.StoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+	PassInitInfo.InitialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	PassInitInfo.FinalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 	SimpleTrianglePass = RenderingContext->CreateRenderPass({PassInitInfo}, VK_PIPELINE_BIND_POINT_GRAPHICS, {}, "Simple Triangle");
@@ -112,7 +114,7 @@ void Renderer::Draw(float DeltaTime)
 
 	GraphicsPipeline->Bind(CmdBuffer);
 
-	vkCmdDraw(CmdBuffer, 3, 1, 0, 0); // TODO: figure out why triangle isn't drawing to swapchain image
+	vkCmdDraw(CmdBuffer, 3, 1, 0, 0);
 
 	vkCmdEndRenderPass(CmdBuffer);
 

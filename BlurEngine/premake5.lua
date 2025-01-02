@@ -9,6 +9,11 @@ workspace "BlurEngine"
 		"Release"
 	}
 
+	flags
+	{
+		"MultiProcessorCompile"
+	}
+
 outputdir = "%{cfg.buildcfg}-%{cfg.system}={cfg.architecture}"
 
 project "BlurEngine"
