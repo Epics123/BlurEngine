@@ -10,6 +10,9 @@
     <Filter Include="Engine\Core\Renderer">
       <UniqueIdentifier>{19B6ADAC-0545-3776-AE63-4B719AD1471C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Core\Runtime">
+      <UniqueIdentifier>{467DC5E4-B2DE-A2F2-3B4C-E9A4A7ACD9B1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine\VulkanCore">
       <UniqueIdentifier>{24BBBA8B-90D1-B821-D948-4443459E89A9}</UniqueIdentifier>
     </Filter>
@@ -29,6 +32,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Renderer\Renderer.h">
       <Filter>Engine\Core\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Core\Runtime\Camera.h">
+      <Filter>Engine\Core\Runtime</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Window.h">
       <Filter>Engine\Core</Filter>
@@ -79,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\Renderer\Renderer.cpp">
       <Filter>Engine\Core\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Core\Runtime\Camera.cpp">
+      <Filter>Engine\Core\Runtime</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\Window.cpp">
       <Filter>Engine\Core</Filter>
