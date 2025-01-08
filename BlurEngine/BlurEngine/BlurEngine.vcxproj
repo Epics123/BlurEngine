@@ -58,7 +58,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.296.0\Include;Source\Engine\Core;Source\Engine\VulkanCore;Source\ThirdParty\glfw\include;Source\ThirdParty\glm;Source\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.296.0\Include;Source\Engine\Core;Source\Engine\VulkanCore;Source\ThirdParty\glfw\include;Source\ThirdParty\glm;Source\ThirdParty\ObjLoader;Source\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -79,7 +79,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.296.0\Include;Source\Engine\Core;Source\Engine\VulkanCore;Source\ThirdParty\glfw\include;Source\ThirdParty\glm;Source\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.3.296.0\Include;Source\Engine\Core;Source\Engine\VulkanCore;Source\ThirdParty\glfw\include;Source\ThirdParty\glm;Source\ThirdParty\ObjLoader;Source\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -100,9 +100,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Core\Application.h" />
+    <ClInclude Include="Source\Engine\Core\AssetManagement\ObjLoader.h" />
     <ClInclude Include="Source\Engine\Core\Logger.h" />
     <ClInclude Include="Source\Engine\Core\Renderer\Renderer.h" />
     <ClInclude Include="Source\Engine\Core\Runtime\Camera.h" />
+    <ClInclude Include="Source\Engine\Core\Runtime\Model.h" />
     <ClInclude Include="Source\Engine\Core\Window.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Buffer.h" />
     <ClInclude Include="Source\Engine\VulkanCore\CommandQueueManager.h" />
@@ -119,9 +121,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\Application.cpp" />
+    <ClCompile Include="Source\Engine\Core\AssetManagement\ObjLoader.cpp" />
     <ClCompile Include="Source\Engine\Core\Logger.cpp" />
     <ClCompile Include="Source\Engine\Core\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Engine\Core\Runtime\Camera.cpp" />
+    <ClCompile Include="Source\Engine\Core\Runtime\Model.cpp" />
     <ClCompile Include="Source\Engine\Core\Window.cpp" />
     <ClCompile Include="Source\Engine\Main.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Buffer.cpp" />

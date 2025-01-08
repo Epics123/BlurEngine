@@ -48,7 +48,7 @@ project "BlurEngine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
 		--"%{IncludeDir.ImGui}",
-		--"%{IncludeDir.ObjLoader}",
+		"%{IncludeDir.ObjLoader}",
 		--"%{IncludeDir.ImgLoader}",
 		"%{IncludeDir.spdlog}",
 		--"%{IncludeDir.yaml}"

@@ -7,6 +7,9 @@
     <Filter Include="Engine\Core">
       <UniqueIdentifier>{130D9B61-7FC2-1357-08B7-0D2E746B0A5B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Core\AssetManagement">
+      <UniqueIdentifier>{BF41CAE5-2B4F-F8CB-B435-F4B62042C482}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine\Core\Renderer">
       <UniqueIdentifier>{19B6ADAC-0545-3776-AE63-4B719AD1471C}</UniqueIdentifier>
     </Filter>
@@ -27,6 +30,9 @@
     <ClInclude Include="Source\Engine\Core\Application.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\Core\AssetManagement\ObjLoader.h">
+      <Filter>Engine\Core\AssetManagement</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\Core\Logger.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
@@ -34,6 +40,9 @@
       <Filter>Engine\Core\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Runtime\Camera.h">
+      <Filter>Engine\Core\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Core\Runtime\Model.h">
       <Filter>Engine\Core\Runtime</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\Window.h">
@@ -80,6 +89,9 @@
     <ClCompile Include="Source\Engine\Core\Application.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Core\AssetManagement\ObjLoader.cpp">
+      <Filter>Engine\Core\AssetManagement</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\Core\Logger.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
@@ -87,6 +99,9 @@
       <Filter>Engine\Core\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\Runtime\Camera.cpp">
+      <Filter>Engine\Core\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Core\Runtime\Model.cpp">
       <Filter>Engine\Core\Runtime</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\Window.cpp">

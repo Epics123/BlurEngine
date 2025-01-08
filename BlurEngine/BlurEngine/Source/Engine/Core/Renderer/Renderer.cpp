@@ -4,9 +4,12 @@
 
 #include "../VulkanCore/ShaderModule.h" // Temporary
 
+#include "../AssetManagement/ObjLoader.h"
+
 #include <vulkan/vulkan.h>
 
 std::filesystem::path Renderer::sShaderDirectory;
+std::filesystem::path Renderer::sModelDirectory;
 
 Renderer::Renderer()
 {
@@ -43,6 +46,13 @@ void Renderer::Init(std::shared_ptr<Window> AppWindow)
 	RenderArea.extent = SwapchainExtent;
 	
 	FramesInFlight = RenderingContext->GetSwapchain()->GetImageCount();
+
+	Renderer::sModelDirectory = std::filesystem::current_path() / "Source/Resources/Models";
+	Renderer::sModelDirectory.make_preferred();
+
+	EngineCore::OBJLoader ObjLoader;
+	auto Teapot = ObjLoader.Load(Renderer::sModelDirectory.string() + "/teapot.obj");
+	SceneMeshes.push_back(Teapot);
 
 	Renderer::sShaderDirectory = std::filesystem::current_path() / "Source/Resources/Shaders";
 	Renderer::sShaderDirectory.make_preferred();

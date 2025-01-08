@@ -4,6 +4,9 @@
 #include "../VulkanCore/Context.h"
 #include "../VulkanCore/Pipeline.h"
 #include "../VulkanCore/CommandQueueManager.h"
+
+#include "../Runtime/Model.h"
+
 #include "Window.h"
 
 #include <memory>
@@ -27,6 +30,7 @@ public:
 
 public:
 	static std::filesystem::path sShaderDirectory;
+	static std::filesystem::path sModelDirectory; // TODO: Should probably move these to some sort of asset manager
 
 private:
 	uint32_t FramesInFlight;
@@ -40,4 +44,6 @@ private:
 
 	std::shared_ptr<VulkanCore::RenderPass> SimpleTrianglePass;
 	VkRect2D RenderArea;
+
+	std::vector<std::shared_ptr<EngineCore::StaticMesh>> SceneMeshes; // TODO: Temporary for now until we have some concept of a scene/level
 };
