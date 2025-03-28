@@ -11,17 +11,17 @@ class Texture;
 
 struct RenderPassInitInfo
 {
-	std::shared_ptr<Texture> AttachmentTexture;
+	std::vector<std::shared_ptr<Texture>> AttachmentTextures;
 
 	uint32_t ResolveAttachmentIndex;
 	uint32_t DepthAttachmentIndex;
 	uint32_t StencilAttachmentIndex = UINT32_MAX;
 
-	VkAttachmentLoadOp LoadOp;
-	VkAttachmentStoreOp StoreOp;
+	std::vector<VkAttachmentLoadOp> LoadOps;
+	std::vector<VkAttachmentStoreOp> StoreOps;
 
-	VkImageLayout InitialLayout;
-	VkImageLayout FinalLayout;
+	std::vector<VkImageLayout> InitialLayouts;
+	std::vector<VkImageLayout> FinalLayouts;
 	VkFormat Format;
 };
 
@@ -30,7 +30,7 @@ class RenderPass final
 public:
 	MOVABLE_ONLY(RenderPass);
 
-	RenderPass(const Context& DeviceContect, const std::vector<RenderPassInitInfo>& InitInfos, 
+	RenderPass(const Context& DeviceContect, const RenderPassInitInfo& InitInfo, 
 			   const std::vector<std::shared_ptr<Texture>> ResolveAttachments, VkPipelineBindPoint BindPoint, 
 			   const std::string& Name = "");
 

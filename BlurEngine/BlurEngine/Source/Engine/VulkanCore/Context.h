@@ -8,6 +8,7 @@
 #include "Pipeline.h"
 #include "CommandQueueManager.h"
 #include "Framebuffer.h"
+#include "Texture.h"
 
 #include "../Core/Window.h"
 
@@ -92,12 +93,15 @@ struct PhysicalDeviceFeatures
 
 		FragmentDensityMapFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT;
 		FragmentDensityMapOffsetFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM;
+
+		ExtendedDynamicStateFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT;
 	}
 
 	VkPhysicalDeviceFeatures DeviceFeatures;
 	VkPhysicalDeviceVulkan11Features Vulkan11Features{};
 	VkPhysicalDeviceVulkan12Features Vulkan12Features{};
 	VkPhysicalDeviceVulkan13Features Vulkan13Features{};
+	VkPhysicalDeviceExtendedDynamicStateFeaturesEXT ExtendedDynamicStateFeatures{};
 
 	// Ray tracing features
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR AccelStructFeatures{};
@@ -134,7 +138,7 @@ public:
 	std::shared_ptr<ShaderModule> CreateShaderModule(const std::string& Filepath, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name = "");
 	std::shared_ptr<ShaderModule> CreateShaderModule(const std::vector<char>& ShaderCode, const std::string& EntryPoint, VkShaderStageFlagBits Stages, const std::string& Name = "");
 
-	std::shared_ptr<RenderPass> CreateRenderPass(const std::vector<RenderPassInitInfo>& InitInfos, VkPipelineBindPoint BindPoint, 
+	std::shared_ptr<RenderPass> CreateRenderPass(const RenderPassInitInfo& InitInfo, VkPipelineBindPoint BindPoint, 
 												 std::vector<std::shared_ptr<Texture>> ResolveAttachments = {}, const std::string& Name = "");
 
 	std::shared_ptr<Pipeline> CreateGraphicsPipeline(const GraphicsPipelineDescriptor& Desc, VkRenderPass Pass, const std::string& Name = "");
@@ -145,12 +149,18 @@ public:
 
 	std::unique_ptr<Framebuffer> CreateFramebuffer(VkRenderPass Pass, const FramebufferCreateInfo& CreateInfo);
 
+	std::shared_ptr<Texture> CreateTexture(const TextureCreateInfo& CreateInfo);
+
+	std::shared_ptr<Buffer> CreatePersistentBuffer(size_t Size, VkBufferUsageFlags Flags, const std::string& Name = "") const;
+
 	void RecreateSwapchain(const VkExtent2D& NewExtent);
 	
 	static void EndableDefaultFeatures();
 	static void EnableIndirectRenderingFeature();
 	static void EnableSyncronizationFeature();
 	static void EnableBufferDeviceAddressFeature();
+	static void EnableDynamicRenderingFeature();
+	static void EnableDynamicStateFeature();
 
 private:
 	void CreateInstance();
@@ -219,7 +229,8 @@ private:
 	const std::vector<const char*> DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_EXT_MEMORY_BUDGET_EXTENSION_NAME,
 														VK_EXT_ATTACHMENT_FEEDBACK_LOOP_LAYOUT_EXTENSION_NAME, VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
 														VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME, VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME,
-														VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME };
+														VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME, VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME,
+														VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME };
 	const std::vector<const char*> RequestedInstanceExtensions = { VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME };
 };
 

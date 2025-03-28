@@ -1,7 +1,19 @@
 #pragma once
 
+#include "RingBuffer.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/type_aligned.hpp>
+
+struct CameraUniforms
+{
+	glm::aligned_mat4 Model; // mat4 aligned to 16 bytes
+	glm::aligned_mat4 View;
+	glm::aligned_mat4 Projection;
+	glm::aligned_mat4 PrevView = glm::mat4(1.0f);
+	glm::aligned_mat4 Jitter = glm::mat4(1.0f);
+};
 
 namespace EngineCore
 {
@@ -15,6 +27,8 @@ public:
 		   float Near = 0.1f, float Far = 4000.0f, 
 		   float StartAspectRatio = 1600.0f / 900.0f);
 
+	void Init(const EngineCore::RingBuffer& InCameraBuffer);
+
 	glm::mat4 GetProjectionMatrix() const { return Projection; }
 	glm::mat4 GetViewMatrix() const;
 
@@ -22,8 +36,15 @@ public:
 	glm::vec3 GetRightVector() const;
 	glm::vec3 GetUpVector() const;
 
+	glm::vec3 GetPosition() const { return Position; }
+
 	// Gets an Euler Angle representation of the camera's orientation in degrees
 	glm::vec3 EulerAngles() const;
+
+	const CameraUniforms& GetUniforms() const { return UniformTransforms; }
+	CameraUniforms& GetUniformsMutable() { return UniformTransforms; }
+
+	std::shared_ptr<EngineCore::RingBuffer> GetCameraBuffer() const { return CameraBuffer; }
 
 	bool IsDirty() const { return bDirty; }
 	bool SetDirty(bool bNewDirty) { bDirty = bNewDirty; }
@@ -42,6 +63,9 @@ private:
 	glm::mat4 Projection{1.0f};
 	glm::mat4 Jitter{1.0f};
 	glm::vec2 JitterVal;
+
+	CameraUniforms UniformTransforms;
+	std::shared_ptr<EngineCore::RingBuffer> CameraBuffer;
 
 	float NearPlane = 10.0f;
 	float FarPlane = 4000.0f;

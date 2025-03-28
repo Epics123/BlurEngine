@@ -62,6 +62,7 @@ namespace VulkanCore
 
 		void CreateSemaphores();
 		void CreateFence();
+		void CreateFramebuffers(const Context& DeviceContext, uint32_t NumImages);
 
 	private:
 		VkDevice VulkanDevice = VK_NULL_HANDLE;
@@ -81,5 +82,6 @@ namespace VulkanCore
 		VkPresentModeKHR CurrentPresentMode;
 
 		std::vector<std::shared_ptr<Framebuffer>> Framebuffers;
+		std::vector<std::shared_ptr<Texture>> DepthTexture;
 	};
 }

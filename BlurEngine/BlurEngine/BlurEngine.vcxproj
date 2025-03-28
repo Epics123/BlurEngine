@@ -105,6 +105,7 @@
     <ClInclude Include="Source\Engine\Core\Renderer\Renderer.h" />
     <ClInclude Include="Source\Engine\Core\Runtime\Camera.h" />
     <ClInclude Include="Source\Engine\Core\Runtime\Model.h" />
+    <ClInclude Include="Source\Engine\Core\Runtime\RingBuffer.h" />
     <ClInclude Include="Source\Engine\Core\Window.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Buffer.h" />
     <ClInclude Include="Source\Engine\VulkanCore\CommandQueueManager.h" />
@@ -113,6 +114,7 @@
     <ClInclude Include="Source\Engine\VulkanCore\PhysicalDevice.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Pipeline.h" />
     <ClInclude Include="Source\Engine\VulkanCore\RenderPass.h" />
+    <ClInclude Include="Source\Engine\VulkanCore\Sampler.h" />
     <ClInclude Include="Source\Engine\VulkanCore\ShaderModule.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Swapchain.h" />
     <ClInclude Include="Source\Engine\VulkanCore\Texture.h" />
@@ -126,6 +128,7 @@
     <ClCompile Include="Source\Engine\Core\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Engine\Core\Runtime\Camera.cpp" />
     <ClCompile Include="Source\Engine\Core\Runtime\Model.cpp" />
+    <ClCompile Include="Source\Engine\Core\Runtime\RingBuffer.cpp" />
     <ClCompile Include="Source\Engine\Core\Window.cpp" />
     <ClCompile Include="Source\Engine\Main.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Buffer.cpp" />
@@ -135,6 +138,7 @@
     <ClCompile Include="Source\Engine\VulkanCore\PhysicalDevice.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Pipeline.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\RenderPass.cpp" />
+    <ClCompile Include="Source\Engine\VulkanCore\Sampler.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\ShaderModule.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Swapchain.cpp" />
     <ClCompile Include="Source\Engine\VulkanCore\Texture.cpp" />
@@ -143,6 +147,8 @@
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Source\Resources\Shaders\IndirectDraw.frag" />
+    <None Include="Source\Resources\Shaders\IndirectDraw.vert" />
     <None Include="Source\Resources\Shaders\SimpleTriangle.frag" />
     <None Include="Source\Resources\Shaders\SimpleTriangle.vert" />
   </ItemGroup>

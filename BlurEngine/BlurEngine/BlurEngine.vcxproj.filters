@@ -69,6 +69,9 @@
     <ClInclude Include="Source\Engine\VulkanCore\RenderPass.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\VulkanCore\Sampler.h">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\ShaderModule.h">
       <Filter>Engine\VulkanCore</Filter>
     </ClInclude>
@@ -83,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\VulkanCore\VulkanCommon.h">
       <Filter>Engine\VulkanCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Core\Runtime\RingBuffer.h">
+      <Filter>Engine\Core\Runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +137,9 @@
     <ClCompile Include="Source\Engine\VulkanCore\RenderPass.cpp">
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\VulkanCore\Sampler.cpp">
+      <Filter>Engine\VulkanCore</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Engine\VulkanCore\ShaderModule.cpp">
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
@@ -149,8 +158,17 @@
     <ClCompile Include="Source\Engine\VulkanCore\VulkanCommon.cpp">
       <Filter>Engine\VulkanCore</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Core\Runtime\RingBuffer.cpp">
+      <Filter>Engine\Core\Runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Source\Resources\Shaders\IndirectDraw.frag">
+      <Filter>Resources\Shaders</Filter>
+    </None>
+    <None Include="Source\Resources\Shaders\IndirectDraw.vert">
+      <Filter>Resources\Shaders</Filter>
+    </None>
     <None Include="Source\Resources\Shaders\SimpleTriangle.frag">
       <Filter>Resources\Shaders</Filter>
     </None>

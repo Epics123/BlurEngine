@@ -176,9 +176,9 @@ std::shared_ptr<VulkanCore::ShaderModule> Context::CreateShaderModule(const std:
 	return std::make_shared<ShaderModule>(*this, ShaderCode, EntryPoint, Stages, Name);
 }
 
-std::shared_ptr<VulkanCore::RenderPass> Context::CreateRenderPass(const std::vector<RenderPassInitInfo>& InitInfos, VkPipelineBindPoint BindPoint, std::vector<std::shared_ptr<Texture>> ResolveAttachments /*= {}*/, const std::string& Name /*= ""*/)
+std::shared_ptr<VulkanCore::RenderPass> Context::CreateRenderPass(const RenderPassInitInfo& InitInfo, VkPipelineBindPoint BindPoint, std::vector<std::shared_ptr<Texture>> ResolveAttachments /*= {}*/, const std::string& Name /*= ""*/)
 {
-	return std::make_shared<RenderPass>(*this, InitInfos, ResolveAttachments, BindPoint, Name);
+	return std::make_shared<RenderPass>(*this, InitInfo, ResolveAttachments, BindPoint, Name);
 }
 
 std::shared_ptr<VulkanCore::Pipeline> Context::CreateGraphicsPipeline(const GraphicsPipelineDescriptor& Desc, VkRenderPass Pass, const std::string& Name)
@@ -220,6 +220,30 @@ VulkanCore::CommandQueueManager Context::CreateTransferCommandQueue(uint32_t Cou
 std::unique_ptr<VulkanCore::Framebuffer> Context::CreateFramebuffer(VkRenderPass Pass, const FramebufferCreateInfo& CreateInfo)
 {
 	return std::make_unique<Framebuffer>(*this, Pass, CreateInfo);
+}
+
+std::shared_ptr<VulkanCore::Texture> Context::CreateTexture(const TextureCreateInfo& CreateInfo)
+{
+	return std::make_shared<Texture>(*this, CreateInfo);
+}
+
+std::shared_ptr<VulkanCore::Buffer> Context::CreatePersistentBuffer(size_t Size, VkBufferUsageFlags Flags, const std::string& Name) const
+{
+	const VkMemoryPropertyFlags MemoryFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
+											  VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+	VkBufferCreateInfo BufferInfo{};
+	BufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	BufferInfo.size = Size;
+	BufferInfo.usage = Flags;
+	BufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	BufferInfo.pNext = VK_NULL_HANDLE;
+
+	VmaAllocationCreateInfo AllocInfo{};
+	AllocInfo.flags = 0;
+	AllocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+	AllocInfo.requiredFlags = MemoryFlags;
+	
+	return std::make_shared<Buffer>(*this, GetAllocator(), BufferInfo, AllocInfo, Name);
 }
 
 void Context::RecreateSwapchain(const VkExtent2D& NewExtent)
@@ -264,6 +288,16 @@ void Context::EnableBufferDeviceAddressFeature()
 {
 	sPhysicalDeviceFeatures.Vulkan12Features.bufferDeviceAddress = VK_TRUE;
 	sPhysicalDeviceFeatures.Vulkan12Features.bufferDeviceAddressCaptureReplay = VK_TRUE;
+}
+
+void Context::EnableDynamicRenderingFeature()
+{
+	sPhysicalDeviceFeatures.Vulkan13Features.dynamicRendering = VK_TRUE;
+}
+
+void Context::EnableDynamicStateFeature()
+{
+	sPhysicalDeviceFeatures.ExtendedDynamicStateFeatures.extendedDynamicState = VK_TRUE;
 }
 
 void Context::CreateInstance()
@@ -361,6 +395,8 @@ void Context::CreateLogicalDevice()
 #if _WIN32
 	FeatureChain.PushBack(sPhysicalDeviceFeatures.Vulkan13Features);
 #endif
+
+	FeatureChain.PushBack(sPhysicalDeviceFeatures.ExtendedDynamicStateFeatures);
 
 	if(GPUDevice.IsRayTracingSupported() && ShouldSupportRayTracing)
 	{

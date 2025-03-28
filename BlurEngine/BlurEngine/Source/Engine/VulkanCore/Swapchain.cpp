@@ -175,6 +175,5 @@ namespace VulkanCore
 
 		VK_CHECK(vkCreateFence(VulkanDevice, &CreateInfo, nullptr, &AcquireFence));
 	}
-
 }
 

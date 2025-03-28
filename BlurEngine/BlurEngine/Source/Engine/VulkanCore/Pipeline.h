@@ -5,12 +5,16 @@
 
 #include <unordered_map>
 #include <list>
+#include <span>
 
 namespace VulkanCore
 {
 
 class Context;
 class ShaderModule;
+class Sampler;
+class Texture;
+class Buffer;
 
 #pragma region PipelineDataStructures
 
@@ -24,6 +28,13 @@ struct DescriptorSet
 {
 	std::vector<VkDescriptorSet> Sets;
 	VkDescriptorSetLayout Layout = VK_NULL_HANDLE;
+};
+
+struct SetAllocInfo
+{
+	uint32_t SetIndex;
+	uint32_t Count;
+	std::string Name;
 };
 
 class PipelineViewport
@@ -162,12 +173,33 @@ public:
 
 	void UpdateDescriptorSets();
 
+	void AllocateDescriptors(const std::vector<SetAllocInfo> AllocInfos);
+
+	void BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::shared_ptr<Buffer> InBuffer, 
+					  uint32_t Offset, uint32_t Size, VkDescriptorType Type, VkFormat Format = VK_FORMAT_UNDEFINED);
+
+	void BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::span<std::shared_ptr<Texture>> Textures,
+					  std::shared_ptr<Sampler> InSampler = nullptr, uint32_t DstArrayElement = 0);
+
+	void BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::span<std::shared_ptr<Sampler>> Samplers);
+
+	void BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::span<std::shared_ptr<VkImageView>> ImageViews, VkDescriptorType Type);
+
+	void BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::vector<std::shared_ptr<Buffer>> Buffers, VkDescriptorType Type);
+
+	void BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::shared_ptr<Texture> InTexture, VkDescriptorType Type);
+
+	void BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::shared_ptr<Texture> InTexture, std::shared_ptr<Sampler> InSampler, 
+					  VkDescriptorType Type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+
 private:
 	void CreateGraphicsPipeline();
 	void CreateComputePipeline();
 
 	void InitDescriptorLayout();
 	void GetSetDescriptorsFromBindPoint(std::vector<SetDescriptor>& InOutSets);
+
+	void InitDescriptorPool();
 
 	VkPipelineLayout CreatePipelineLayout(const std::vector<VkDescriptorSetLayout>& DescLayouts, const std::vector<VkPushConstantRange>& PushConstants);
 

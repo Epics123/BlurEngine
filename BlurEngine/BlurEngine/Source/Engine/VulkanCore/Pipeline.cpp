@@ -1,8 +1,12 @@
 #include "Pipeline.h"
 #include "Context.h"
+#include "Sampler.h"
+#include "Texture.h"
+#include "Buffer.h"
 
 namespace VulkanCore
 {
+	static constexpr int MAX_DESCRIPTOR_SETS = 4096 * 3;
 	
 	Pipeline::Pipeline(const Context& DeviceContext, const GraphicsPipelineDescriptor& Desc, VkRenderPass Pass, const std::string& Name)
 		: VulkanDevice {DeviceContext.GetDevice()}, GraphicsPipelineDesc{Desc}, BindPoint{VK_PIPELINE_BIND_POINT_GRAPHICS}, VulkanRenderPass{Pass}, DebugName{Name}
@@ -47,6 +51,288 @@ namespace VulkanCore
 			ImageInfos.clear();
 		}
 	}
+
+	void Pipeline::AllocateDescriptors(const std::vector<SetAllocInfo> AllocInfos)
+	{
+		if(VulkanDescriptorPool == VK_NULL_HANDLE)
+		{
+			InitDescriptorPool();
+		}
+
+		for(SetAllocInfo AllocInfo : AllocInfos)
+		{
+			ASSERT(DescriptorSets.contains(AllocInfo.SetIndex), "This pipeline doesn't have a set with index " + std::to_string(AllocInfo.SetIndex));
+
+			VkDescriptorSetAllocateInfo DescAllocInfo{};
+			DescAllocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+			DescAllocInfo.descriptorPool = VulkanDescriptorPool;
+			DescAllocInfo.descriptorSetCount = 1;
+			DescAllocInfo.pSetLayouts = &DescriptorSets[AllocInfo.SetIndex].Layout;
+
+			for(uint32_t i = 0; i < AllocInfo.Count; i++)
+			{
+				VkDescriptorSet DescSet{VK_NULL_HANDLE};
+				VK_CHECK(vkAllocateDescriptorSets(VulkanDevice, &DescAllocInfo, &DescSet));
+
+				DescriptorSets[AllocInfo.SetIndex].Sets.push_back(DescSet);
+			}
+		}
+	}
+
+	void Pipeline::BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::shared_ptr<Buffer> InBuffer, uint32_t Offset,
+		uint32_t Size, VkDescriptorType Type, VkFormat Format)
+	{
+		std::vector<VkDescriptorBufferInfo> NewBufferInfos = { {InBuffer->GetVkBuffer(), Offset, Size} };
+		BufferInfos.emplace_back(NewBufferInfos);
+
+		const bool bTexelBuffer = Type == VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER || Type == VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+		if (bTexelBuffer)
+		{
+			ASSERT(Format != VK_FORMAT_UNDEFINED, "Format must be specified for texel buffer");
+			BufferViewInfos.emplace_back(InBuffer->RequestBufferView(Format));
+		}
+
+		VkDescriptorSet& DstSet = DescriptorSets[Set].Sets[Index];
+		ASSERT(DstSet != VK_NULL_HANDLE, "Descriptor set was not allocated before binding");
+
+		VkWriteDescriptorSet WriteDescSet{};
+		WriteDescSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		WriteDescSet.dstSet = DstSet;
+		WriteDescSet.dstBinding = Binding;
+		WriteDescSet.dstArrayElement = 0;
+		WriteDescSet.descriptorCount = 1;
+		WriteDescSet.descriptorType = Type;
+		WriteDescSet.pImageInfo = VK_NULL_HANDLE;
+		WriteDescSet.pBufferInfo = bTexelBuffer ? VK_NULL_HANDLE : BufferInfos.back().data();
+		WriteDescSet.pTexelBufferView = bTexelBuffer ? &BufferViewInfos.back() : VK_NULL_HANDLE;
+		WriteDescSet.pNext = VK_NULL_HANDLE;
+
+		WriteDescSets.emplace_back(std::move(WriteDescSet));
+	}
+
+	void Pipeline::BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::span<std::shared_ptr<Texture>> Textures,
+								std::shared_ptr<Sampler> InSampler, uint32_t DstArrayElement)
+	{
+		if(Textures.size() == 0)
+		{
+			BE_ERROR("Empty texure array provided when binding resource!");
+			return;
+		}
+
+		std::unique_lock<std::mutex> MutexLock(Mutex);
+
+		ImageInfos.push_back(std::vector<VkDescriptorImageInfo>());
+		ImageInfos.back().reserve(Textures.size());
+
+		for(const std::shared_ptr<Texture> Tex : Textures)
+		{
+			if(Tex)
+			{
+				VkDescriptorImageInfo ImageInfo;
+				ImageInfo.sampler = InSampler ? InSampler->GetVkSampler() : VK_NULL_HANDLE;
+				ImageInfo.imageView = Tex->GetImageView(0);
+				ImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+				ImageInfos.back().emplace_back(ImageInfo);
+			}
+		}
+
+		if(ImageInfos.back().size() == 0)
+		{
+			BE_ERROR("No image infos allocated!");
+			return;
+		}
+
+		ASSERT(DescriptorSets[Set].Sets[Index] != VK_NULL_HANDLE, "Descriptor set was not allocated before binding");
+
+		VkWriteDescriptorSet WriteDescSet{};
+		WriteDescSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		WriteDescSet.dstSet = DescriptorSets[Set].Sets[Index];
+		WriteDescSet.dstBinding = Binding;
+		WriteDescSet.descriptorCount = static_cast<uint32_t>(ImageInfos.back().size());
+		WriteDescSet.descriptorType = InSampler ? VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER : VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		WriteDescSet.pImageInfo = ImageInfos.back().data();
+		WriteDescSet.pBufferInfo = VK_NULL_HANDLE;
+		WriteDescSet.pTexelBufferView = VK_NULL_HANDLE;
+		WriteDescSet.pNext = VK_NULL_HANDLE;
+
+		WriteDescSets.emplace_back(std::move(WriteDescSet));
+	}
+
+	void Pipeline::BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::span<std::shared_ptr<Sampler>> Samplers)
+	{
+		if (Samplers.size() == 0)
+		{
+			BE_ERROR("Empty sampler array provided when binding resource!");
+			return;
+		}
+
+		ImageInfos.push_back(std::vector<VkDescriptorImageInfo>());
+		ImageInfos.back().reserve(Samplers.size());
+
+		for (std::shared_ptr<Sampler> CurrentSampler : Samplers)
+		{
+			VkDescriptorImageInfo ImageInfo;
+			ImageInfo.sampler = CurrentSampler->GetVkSampler();
+
+			ImageInfos.back().emplace_back(ImageInfo);
+		}
+
+		ASSERT(DescriptorSets[Set].Sets[Index] != VK_NULL_HANDLE, "Descriptor set was not allocated before binding");
+
+		VkWriteDescriptorSet WriteDescSet{};
+		WriteDescSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		WriteDescSet.dstSet = DescriptorSets[Set].Sets[Index];
+		WriteDescSet.dstBinding = Binding;
+		WriteDescSet.dstArrayElement = 0;
+		WriteDescSet.descriptorCount = static_cast<uint32_t>(ImageInfos.back().size());
+		WriteDescSet.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+		WriteDescSet.pImageInfo = ImageInfos.back().data();
+		WriteDescSet.pBufferInfo = VK_NULL_HANDLE;
+		WriteDescSet.pTexelBufferView = VK_NULL_HANDLE;
+		WriteDescSet.pNext = VK_NULL_HANDLE;
+
+		WriteDescSets.emplace_back(std::move(WriteDescSet));
+	}
+
+void Pipeline::BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::span<std::shared_ptr<VkImageView>> ImageViews, VkDescriptorType Type)
+{
+	if (ImageViews.size() == 0)
+	{
+		BE_ERROR("Empty Image View array provided when binding resource!");
+		return;
+	}
+
+	ImageInfos.push_back(std::vector<VkDescriptorImageInfo>());
+	ImageInfos.back().reserve(ImageViews.size());
+
+	for (std::shared_ptr<VkImageView> ImageView : ImageViews)
+	{
+		VkDescriptorImageInfo ImageInfo;
+		ImageInfo.imageView = *ImageView;
+
+		ImageInfos.back().emplace_back(ImageInfo);
+	}
+
+	ASSERT(DescriptorSets[Set].Sets[Index] != VK_NULL_HANDLE, "Descriptor set was not allocated before binding");
+
+	VkWriteDescriptorSet WriteDescSet{};
+	WriteDescSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	WriteDescSet.dstSet = DescriptorSets[Set].Sets[Index];
+	WriteDescSet.dstBinding = Binding;
+	WriteDescSet.dstArrayElement = 0;
+	WriteDescSet.descriptorCount = static_cast<uint32_t>(ImageInfos.back().size());
+	WriteDescSet.descriptorType = Type;
+	WriteDescSet.pImageInfo = ImageInfos.back().data();
+	WriteDescSet.pBufferInfo = VK_NULL_HANDLE;
+	WriteDescSet.pTexelBufferView = VK_NULL_HANDLE;
+	WriteDescSet.pNext = VK_NULL_HANDLE;
+
+	WriteDescSets.emplace_back(std::move(WriteDescSet));
+}
+
+void Pipeline::BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::vector<std::shared_ptr<Buffer>> Buffers, VkDescriptorType Type)
+{
+	if (Buffers.size() == 0)
+	{
+		BE_ERROR("Empty buffer array provided when binding resource!");
+		return;
+	}
+
+	std::vector<VkDescriptorBufferInfo> BufferDescInfos;
+	for (std::shared_ptr<Buffer> Buff : Buffers)
+	{
+		VkDescriptorBufferInfo BufferInfo;
+		BufferInfo.buffer = Buff->GetVkBuffer();
+		BufferInfo.offset = 0;
+		BufferInfo.range = Buff->GetSize();
+
+		BufferDescInfos.emplace_back(BufferInfo);
+	}
+
+	BufferInfos.emplace_back(BufferDescInfos);
+
+	ASSERT(DescriptorSets[Set].Sets[Index] != VK_NULL_HANDLE, "Descriptor set was not allocated before binding");
+
+	VkWriteDescriptorSet WriteDescSet{};
+	WriteDescSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	WriteDescSet.dstSet = DescriptorSets[Set].Sets[Index];
+	WriteDescSet.dstBinding = Binding;
+	WriteDescSet.dstArrayElement = 0;
+	WriteDescSet.descriptorCount = static_cast<uint32_t>(BufferDescInfos.size());
+	WriteDescSet.descriptorType = Type;
+	WriteDescSet.pImageInfo = VK_NULL_HANDLE;
+	WriteDescSet.pBufferInfo = BufferInfos.back().data();
+	WriteDescSet.pTexelBufferView = VK_NULL_HANDLE;
+	WriteDescSet.pNext = VK_NULL_HANDLE;
+
+	WriteDescSets.emplace_back(std::move(WriteDescSet));
+}
+
+	void Pipeline::BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::shared_ptr<Texture> InTexture, VkDescriptorType Type)
+	{
+		if(!InTexture)
+		{
+			BE_ERROR("Trying to bind null texture!");
+			return;
+		}
+
+		ImageInfos.push_back(std::vector<VkDescriptorImageInfo>());
+
+		VkDescriptorImageInfo ImageInfo;
+		ImageInfo.imageView = InTexture->GetImageView(0);
+		ImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+		ImageInfos.back().push_back(ImageInfo);
+
+		ASSERT(DescriptorSets[Set].Sets[Index] != VK_NULL_HANDLE, "Descriptor set was not allocated before binding");
+
+		VkWriteDescriptorSet WriteDescSet{};
+		WriteDescSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		WriteDescSet.dstSet = DescriptorSets[Set].Sets[Index];
+		WriteDescSet.dstBinding = Binding;
+		WriteDescSet.dstArrayElement = 0;
+		WriteDescSet.descriptorCount = static_cast<uint32_t>(ImageInfos.back().size());
+		WriteDescSet.descriptorType = Type;
+		WriteDescSet.pImageInfo = ImageInfos.back().data();
+		WriteDescSet.pBufferInfo = VK_NULL_HANDLE;
+		WriteDescSet.pTexelBufferView = VK_NULL_HANDLE;
+		WriteDescSet.pNext = VK_NULL_HANDLE;
+
+		WriteDescSets.emplace_back(std::move(WriteDescSet));
+	}
+
+void Pipeline::BindResource(uint32_t Set, uint32_t Binding, uint32_t Index, std::shared_ptr<Texture> InTexture, std::shared_ptr<Sampler> InSampler, VkDescriptorType Type)
+{
+	if (!InTexture || !InSampler)
+	{
+		BE_ERROR("Trying to bind invalid texture or sampler!");
+		return;
+	}
+
+	ImageInfos.push_back(std::vector<VkDescriptorImageInfo>());
+
+	VkDescriptorImageInfo ImageInfo;
+	ImageInfo.imageView = InTexture->GetImageView(0);
+	ImageInfo.sampler = InSampler->GetVkSampler();
+	ImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+	ASSERT(DescriptorSets[Set].Sets[Index] != VK_NULL_HANDLE, "Descriptor set was not allocated before binding");
+
+	VkWriteDescriptorSet WriteDescSet{};
+	WriteDescSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	WriteDescSet.dstSet = DescriptorSets[Set].Sets[Index];
+	WriteDescSet.dstBinding = Binding;
+	WriteDescSet.dstArrayElement = 0;
+	WriteDescSet.descriptorCount = static_cast<uint32_t>(ImageInfos.back().size());
+	WriteDescSet.descriptorType = Type;
+	WriteDescSet.pImageInfo = ImageInfos.back().data();
+	WriteDescSet.pBufferInfo = VK_NULL_HANDLE;
+	WriteDescSet.pTexelBufferView = VK_NULL_HANDLE;
+	WriteDescSet.pNext = VK_NULL_HANDLE;
+
+	WriteDescSets.emplace_back(std::move(WriteDescSet));
+}
 
 	void Pipeline::CreateGraphicsPipeline()
 	{
@@ -317,6 +603,38 @@ namespace VulkanCore
 		default:
 			break;
 		}
+	}
+
+	void Pipeline::InitDescriptorPool()
+	{
+		std::vector<SetDescriptor> SetDescs;
+
+		if(BindPoint == VK_PIPELINE_BIND_POINT_GRAPHICS)
+		{
+			SetDescs = GraphicsPipelineDesc.SetDescriptors;
+		}
+		else if(BindPoint == VK_PIPELINE_BIND_POINT_COMPUTE)
+		{
+			SetDescs = ComputePipelineDesc.SetDescriptors;
+		}
+
+		std::vector<VkDescriptorPoolSize> PoolSizes;
+		for(uint32_t SetIndex = 0; SetIndex < (uint32_t)SetDescs.size(); SetIndex++)
+		{
+			for(const auto& Binding : SetDescs[SetIndex].Bindings)
+			{
+				PoolSizes.push_back({ Binding.descriptorType, MAX_DESCRIPTOR_SETS });
+			}
+		}
+
+		VkDescriptorPoolCreateInfo DescPoolInfo{};
+		DescPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		DescPoolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
+		DescPoolInfo.maxSets = MAX_DESCRIPTOR_SETS;
+		DescPoolInfo.poolSizeCount = static_cast<uint32_t>(PoolSizes.size());
+		DescPoolInfo.pPoolSizes = PoolSizes.data();
+
+		VK_CHECK(vkCreateDescriptorPool(VulkanDevice, &DescPoolInfo, nullptr, &VulkanDescriptorPool));
 	}
 
 	VkPipelineLayout Pipeline::CreatePipelineLayout(const std::vector<VkDescriptorSetLayout>& DescLayouts, const std::vector<VkPushConstantRange>& PushConstants)

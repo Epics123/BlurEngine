@@ -8,6 +8,12 @@ namespace EngineCore
 		  NearPlane{Near}, FarPlane{Far}, AspectRatio{StartAspectRatio}
 	{
 		Projection = glm::perspective(glm::radians(Fov), AspectRatio, NearPlane, FarPlane);
+		UniformTransforms = CameraUniforms{glm::mat4(1.0f), GetViewMatrix(), Projection };
+	}
+
+	void Camera::Init(const EngineCore::RingBuffer& InCameraBuffer)
+	{
+		CameraBuffer = std::make_shared<EngineCore::RingBuffer>(InCameraBuffer);
 	}
 
 	glm::mat4 Camera::GetViewMatrix() const

@@ -7,7 +7,7 @@
 namespace VulkanCore
 {
 
-	RenderPass::RenderPass(const Context& DeviceContect, const std::vector<RenderPassInitInfo>& InitInfos, 
+	RenderPass::RenderPass(const Context& DeviceContect, const RenderPassInitInfo& InitInfo, 
 						   const std::vector<std::shared_ptr<Texture>> ResolveAttachments, 
 						   VkPipelineBindPoint BindPoint, const std::string& Name /*= ""*/)
 		: VulkanDevice{DeviceContect.GetDevice()}
@@ -17,19 +17,19 @@ namespace VulkanCore
 		std::vector<VkAttachmentReference> ResolveAttachmentReferences;
 		std::optional<VkAttachmentReference> DepthStencilAttachmentReference;
 
-		for(uint32_t Index = 0; Index < (uint32_t) InitInfos.size(); Index++)
+		for(uint32_t Index = 0; Index < (uint32_t) InitInfo.AttachmentTextures.size(); Index++)
 		{
-			std::shared_ptr<Texture> AttachmentTexture = InitInfos[Index].AttachmentTexture;
+			std::shared_ptr<Texture> AttachmentTexture = InitInfo.AttachmentTextures[Index];
 
 			VkAttachmentDescription AttachmentDesc{};
 			AttachmentDesc.format = AttachmentTexture->GetFormat();
 			AttachmentDesc.samples = AttachmentTexture->GetSampleCount();
-			AttachmentDesc.loadOp = InitInfos[Index].LoadOp;
-			AttachmentDesc.storeOp = InitInfos[Index].StoreOp;
-			AttachmentDesc.stencilLoadOp = AttachmentTexture->IsStencil() ? InitInfos[Index].LoadOp : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			AttachmentDesc.stencilStoreOp = AttachmentTexture->IsStencil() ? InitInfos[Index].StoreOp : VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			AttachmentDesc.loadOp = InitInfo.LoadOps[Index];
+			AttachmentDesc.storeOp = InitInfo.StoreOps[Index];
+			AttachmentDesc.stencilLoadOp = AttachmentTexture->IsStencil() ? InitInfo.LoadOps[Index] : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			AttachmentDesc.stencilStoreOp = AttachmentTexture->IsStencil() ? InitInfo.StoreOps[Index] : VK_ATTACHMENT_STORE_OP_DONT_CARE;
 			AttachmentDesc.initialLayout = AttachmentTexture->GetLayout();
-			AttachmentDesc.finalLayout = InitInfos[Index].FinalLayout;
+			AttachmentDesc.finalLayout = InitInfo.FinalLayouts[Index];
 
 			AttachmentDescriptors.emplace_back(AttachmentDesc);
 
@@ -54,12 +54,12 @@ namespace VulkanCore
 			VkAttachmentDescription AttachmentDesc{};
 			AttachmentDesc.format = ResolveAttachments[Index]->GetFormat();
 			AttachmentDesc.samples = VK_SAMPLE_COUNT_1_BIT;
-			AttachmentDesc.loadOp = InitInfos[Index + NumAttachments].LoadOp;
-			AttachmentDesc.storeOp = InitInfos[Index + NumAttachments].StoreOp;
+			AttachmentDesc.loadOp = InitInfo.LoadOps[Index + NumAttachments];
+			AttachmentDesc.storeOp = InitInfo.StoreOps[Index + NumAttachments];
 			AttachmentDesc.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			AttachmentDesc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 			AttachmentDesc.initialLayout = ResolveAttachments[Index]->GetLayout();
-			AttachmentDesc.finalLayout = InitInfos[Index + NumAttachments].FinalLayout;
+			AttachmentDesc.finalLayout = InitInfo.FinalLayouts[Index + NumAttachments];
 
 			VkAttachmentReference AttachmentRef{};
 			AttachmentRef.attachment = static_cast<uint32_t>(AttachmentDescriptors.size() - 1);
